@@ -16,7 +16,7 @@ slice. Status uses markdown checkboxes:
 - [>] **In Progress** (update to this during work)
 - [x] **Done** (mark complete with notes if needed)
 
-## Setup & Foundation Slices
+## Setup & Foundation
 
 - [ ] **1. Initialize Project with Scaffold-ETH 2**  
   End-to-end: Clone Scaffold-ETH 2 repo, run `yarn install && yarn
@@ -33,7 +33,7 @@ slice. Status uses markdown checkboxes:
   frontend queries `getHead()` via `useReadContract` and displays
   "Chain ready: Head ID 0".
 
-## Posting Flow Slices
+## Posting Flow
 
 - [ ] **3. Implement Basic On-Chain Posting (No IPFS/Hash)**  
   End-to-end: Add `post(string memory message) external` fn: Validate
@@ -61,7 +61,7 @@ slice. Status uses markdown checkboxes:
   Async flow in React: upload → tx with CID. Deliverable: Post stores
   CID on-chain; console logs fetched JSON from `ipfs.io/ipfs/{CID}`.
 
-## Retrieval & Feed Slices
+## Retrieval & Feed
 
 - [ ] **6. Implement On-Chain Linked List Traversal View**  
   End-to-end: Add `getPosts(uint startId, uint count) view returns
@@ -79,7 +79,7 @@ slice. Status uses markdown checkboxes:
   with verified messages or degraded UI. Deliverable: Feed renders
   messages (or "Unavailable—verify CID" fallbacks); all show verified.
 
-## Real-Time & Polish Slices
+## Real-Time & Polish
 
 - [ ] **8. Enable Event-Driven Real-Time Feed Updates**  
   End-to-end: Emit full `PostCreated(uint id, string cid, address
@@ -99,7 +99,7 @@ slice. Status uses markdown checkboxes:
   Polished post form/feed; handles failures gracefully, gaps via
   refresh.
 
-## Testing & Deployment Slices
+## Testing & Deployment
 
 - [ ] **10. Write Core Unit Tests for Business Logic**  
   End-to-end: Foundry tests for contract (length validate, hash

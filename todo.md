@@ -18,7 +18,7 @@ slice. Status uses markdown checkboxes:
 
 ## Setup & Foundation
 
-- [ ] **1. Initialize Project with Scaffold-ETH 2**  
+- [x] **1. Initialize Project with Scaffold-ETH 2**  
   End-to-end: Clone Scaffold-ETH 2 repo, run `yarn install && yarn
   chain` for local Hardhat node + basic React app. Core: Pure setup
   script validating env. Shell: App layer boots dApp with wallet

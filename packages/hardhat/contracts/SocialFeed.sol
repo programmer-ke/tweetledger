@@ -7,12 +7,12 @@ contract SocialFeed {
     uint256 public tail = 0; // ID of the latest post (newest)
 
     // Empty Post struct (to be expanded later)
-    struct Post {
+    /*struct Post {
         // Placeholder: fields like id, author, etc., will be added
-    }
+	}*/
 
     // Constructor (minimal, no params needed yet)
-    constructor() {}
+    //constructor() {}
 
     // Pure view function to get the tail ID (current latest post ID)
     function getHead() external pure returns (uint256) {

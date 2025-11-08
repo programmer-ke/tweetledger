@@ -25,7 +25,7 @@ slice. Status uses markdown checkboxes:
   connect (wagmi). Deliverable: Local dev server at localhost:3000
   with "Hello Scaffold-ETH" page and console-logged wallet address.
 
-- [ ] **2. Deploy Minimal Contract Skeleton**  
+- [x] **2. Deploy Minimal Contract Skeleton**  
   End-to-end: Add basic Solidity contract (`SocialFeed.sol`) with
   constructor, `head`/`tail` pointers, and empty `Post` struct. Core:
   Pure view `getHead()` returning tail ID. Shell: Hardhat deploy
@@ -35,7 +35,7 @@ slice. Status uses markdown checkboxes:
 
 ## Posting Flow
 
-- [ ] **3. Implement Basic On-Chain Posting (No IPFS/Hash)**  
+- [>] **3. Implement Basic On-Chain Posting (No IPFS/Hash)**  
   End-to-end: Add `post(string memory message) external` fn: Validate
   length on-chain, mint ID, store minimal `Post {id, author,
   timestamp, prevId}` in mapping, update tail, emit empty

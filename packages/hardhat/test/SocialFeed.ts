@@ -1,10 +1,15 @@
 import { expect } from "chai";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { ethers } from "hardhat";
+import { ethers, Signer } from "hardhat";
 import { SocialFeed } from "../typechain-types";
 
 describe("SocialFeed", function () {
   let socialFeed: SocialFeed;
+  let user: Signer;
+
+  before(async () => {
+    [user] = await ethers.getSigners();
+  });
 
   // We define a fixture to reuse the same setup in every test.
   beforeEach(async () => {
@@ -22,21 +27,19 @@ describe("SocialFeed", function () {
 
   describe("Post", () => {
     it("Should create a post successfully", async () => {
-      const [user] = await ethers.getSigners();
       const message = "Hello, world!"; // <= 280 chars
       await expect(socialFeed.connect(user).post(message))
         .to.emit(socialFeed, "PostCreated")
-        .withArgs(1, user.address, anyValue);
+        .withArgs(1, await user.getAddress(), anyValue);
 
       expect(await socialFeed.tail()).to.equal(1);
       const post = await socialFeed.posts(1);
       expect(post.id).to.equal(1);
-      expect(post.author).to.equal(user.address);
+      expect(post.author).to.equal(await user.getAddress());
       expect(post.prevId).to.equal(0); // First post
     });
 
     it("Should validate message length", async function () {
-      const [user] = await ethers.getSigners();
       const longMessage = "a".repeat(281); // >280
       await expect(socialFeed.connect(user).post(longMessage)).to.be.reverted; // Reverts on invalid
 
@@ -47,7 +50,6 @@ describe("SocialFeed", function () {
 
   describe("Posting multiple", () => {
     it("Should update linked list on multiple posts", async () => {
-      const [user] = await ethers.getSigners();
       await socialFeed.connect(user).post("First");
       await socialFeed.connect(user).post("Second");
 

@@ -11,11 +11,4 @@ contract SocialFeed {
         // Placeholder: fields like id, author, etc., will be added
 	}*/
 
-    // Constructor (minimal, no params needed yet)
-    //constructor() {}
-
-    // Pure view function to get the tail ID (current latest post ID)
-    function getHead() external pure returns (uint256) {
-        return 0; // Initially 0; will be updated to return tail when list is populated
-    }
 }

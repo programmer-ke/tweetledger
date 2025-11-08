@@ -16,7 +16,7 @@ contract SocialFeed {
 
     mapping(uint256 => Post) public posts;
 
-    event PostCreated(uint256 id);
+    event PostCreated(uint256 id, address author, uint256 timestamp);
 
     function post(string memory message) external {
         require(bytes(message).length > 0 && bytes(message).length <= 280,
@@ -35,6 +35,6 @@ contract SocialFeed {
         }
         tail = id;
 
-        emit PostCreated(id);
+        emit PostCreated(id, msg.sender, block.timestamp);
     }
 }

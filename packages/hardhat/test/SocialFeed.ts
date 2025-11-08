@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { ethers } from "hardhat";
 import { SocialFeed } from "../typechain-types";
 
@@ -18,9 +19,15 @@ describe("SocialFeed", function () {
     });
   });
 
-  describe("getHead", function () {
-    it("Should return the tail ID (initially 0)", async function () {
-      expect(await socialFeed.getHead()).to.equal(0);
+  describe("Posting", () => {
+    it("Should create a post successfully", async () => {
+      const [user] = await ethers.getSigners();
+      const message = "Hello, world!"; // <= 280 chars
+      await expect(socialFeed.connect(user).post(message))
+	.to.emit(socialFeed, "PostCreated")
+	.withArgs(1, user.address, anyValue);
+      
     });
   });
+
 });

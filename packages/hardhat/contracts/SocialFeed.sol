@@ -19,7 +19,8 @@ contract SocialFeed {
     event PostCreated(uint256 id);
 
     function post(string memory message) external {
-        require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");
+        require(bytes(message).length > 0 && bytes(message).length <= 280,
+		"Message must be 1-280 characters");
 
         uint256 id = nextId++;
         posts[id] = Post({

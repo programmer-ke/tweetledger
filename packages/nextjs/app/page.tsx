@@ -13,7 +13,7 @@ const Home: NextPage = () => {
   const messageLength = message.length;
   const isValid = messageLength > 0 && messageLength <= 280;
 
-  const { writeContractAsync, isPending } = useScaffoldWriteContract("SocialFeed");
+  const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "SocialFeed" });
 
   const handlePost = async () => {
     if (!isValid) return;

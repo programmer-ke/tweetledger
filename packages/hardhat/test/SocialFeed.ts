@@ -59,4 +59,24 @@ describe("SocialFeed", function () {
       expect(secondPost.prevId).to.equal(1);
     });
   });
+
+  describe("Hashing", () => {
+    it("Should compute correct message hash via pure function", async () => {
+      const message = "Test message";
+      const author = await user.getAddress();
+      const timestamp = 1234567890; // Example timestamp
+      const expectedHash = ethers.keccak256(
+        ethers.solidityPacked(["string", "address", "uint256"], [message, author, timestamp]),
+      );
+      expect(await socialFeed.computeMessageHash(message, author, timestamp)).to.equal(expectedHash);
+    });
+
+    it("Should store correct message hash in posts after posting", async () => {
+      const message = "Test message";
+      await socialFeed.connect(user).post(message);
+      const post = await socialFeed.posts(1);
+      const expectedHash = await socialFeed.computeMessageHash(message, post.author, post.timestamp);
+      expect(post.messageHash).to.equal(expectedHash);
+    });
+  });
 });

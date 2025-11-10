@@ -44,7 +44,7 @@ slice. Status uses markdown checkboxes:
   textarea/counter, `useWriteContract` call. Deliverable: Post message
   via wallet; view shows on-chain author/timestamp (no content yet).
 
-- [ ] **4. Add Message Hash Binding to Posting**  
+- [x] **4. Add Message Hash Binding to Posting**  
   End-to-end: Update `post` to compute/store `messageHash =
   keccak256(abi.encodePacked(message, msg.sender,
   block.timestamp))`. Core: Pure JS util `computeMessageHash(message:

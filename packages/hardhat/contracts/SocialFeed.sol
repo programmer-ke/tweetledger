@@ -12,6 +12,7 @@ contract SocialFeed {
         address author;
         uint256 timestamp;
         uint256 prevId; // Previous post ID in the linked list
+        bytes32 messageHash; // Hash of the message, author, and timestamp
     }
 
     mapping(uint256 => Post) public posts;
@@ -19,15 +20,16 @@ contract SocialFeed {
     event PostCreated(uint256 id, address author, uint256 timestamp);
 
     function post(string memory message) external {
-        require(bytes(message).length > 0 && bytes(message).length <= 280,
-		"Message must be 1-280 characters");
+        require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");
 
         uint256 id = nextId++;
+        bytes32 messageHash = computeMessageHash(message, msg.sender, block.timestamp);
         posts[id] = Post({
             id: id,
             author: msg.sender,
             timestamp: block.timestamp,
-            prevId: tail
+            prevId: tail,
+            messageHash: messageHash
         });
 
         if (tail == 0) {
@@ -36,5 +38,13 @@ contract SocialFeed {
         tail = id;
 
         emit PostCreated(id, msg.sender, block.timestamp);
+    }
+
+    function computeMessageHash(
+        string memory message,
+        address author,
+        uint256 timestamp
+    ) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(message, author, timestamp));
     }
 }

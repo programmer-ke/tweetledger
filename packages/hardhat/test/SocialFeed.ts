@@ -70,5 +70,13 @@ describe("SocialFeed", function () {
       );
       expect(await socialFeed.computeMessageHash(message, author, timestamp)).to.equal(expectedHash);
     });
+
+    it("Should store correct message hash in posts after posting", async () => {
+      const message = "Test message";
+      await socialFeed.connect(user).post(message);
+      const post = await socialFeed.posts(1);
+      const expectedHash = await socialFeed.computeMessageHash(message, post.author, post.timestamp);
+      expect(post.messageHash).to.equal(expectedHash);
+    });
   });
 });

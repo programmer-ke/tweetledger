@@ -35,7 +35,7 @@ slice. Status uses markdown checkboxes:
 
 ## Posting Flow
 
-- [>] **3. Implement Basic On-Chain Posting (No IPFS/Hash)**  
+- [x] **3. Implement Basic On-Chain Posting (No IPFS/Hash)**  
   End-to-end: Add `post(string memory message) external` fn: Validate
   length on-chain, mint ID, store minimal `Post {id, author,
   timestamp, prevId}` in mapping, update tail, emit empty

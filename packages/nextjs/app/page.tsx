@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { uploadToIPFS } from "~~/lib/core";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
@@ -18,6 +19,10 @@ const Home: NextPage = () => {
   const handlePost = async () => {
     if (!isValid) return;
     try {
+      const data = { message };
+      const cid = await uploadToIPFS(data);
+      console.log("Uploaded to IPFS with CID:", cid);
+
       await writeContractAsync(
         {
           functionName: "post",

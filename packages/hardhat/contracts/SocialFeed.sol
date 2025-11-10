@@ -24,12 +24,12 @@ contract SocialFeed {
 
         uint256 id = nextId++;
         bytes32 messageHash = computeMessageHash(message, msg.sender, block.timestamp);
-        posts[id] = Post({ 
-            id: id, 
-            author: msg.sender, 
-            timestamp: block.timestamp, 
+        posts[id] = Post({
+            id: id,
+            author: msg.sender,
+            timestamp: block.timestamp,
             prevId: tail,
-            messageHash: messageHash 
+            messageHash: messageHash
         });
 
         if (tail == 0) {

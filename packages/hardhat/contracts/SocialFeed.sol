@@ -37,4 +37,8 @@ contract SocialFeed {
 
         emit PostCreated(id, msg.sender, block.timestamp);
     }
+
+    function computeMessageHash(string memory message, address author, uint256 timestamp) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(message, author, timestamp));
+    }
 }

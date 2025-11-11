@@ -4,8 +4,8 @@ import { useState } from "react";
 import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { uploadToIPFS } from "~~/actions/uploadToIPFS";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();

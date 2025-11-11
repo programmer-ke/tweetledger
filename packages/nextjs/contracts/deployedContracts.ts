@@ -35,6 +35,35 @@ const deployedContracts = {
           type: "event",
         },
         {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "author",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "computeMessageHash",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "head",
           outputs: [
@@ -102,6 +131,11 @@ const deployedContracts = {
               internalType: "uint256",
               name: "prevId",
               type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "messageHash",
+              type: "bytes32",
             },
           ],
           stateMutability: "view",

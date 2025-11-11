@@ -1,7 +1,8 @@
 "use server";
 
-import { PinataSDK } from "pinata";
 import * as dotenv from "dotenv";
+import { PinataSDK } from "pinata";
+
 dotenv.config();
 
 const pinata = new PinataSDK({

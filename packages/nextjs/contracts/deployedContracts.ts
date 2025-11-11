@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SocialFeed: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       abi: [
         {
           anonymous: false,
@@ -20,6 +20,12 @@ const deployedContracts = {
             },
             {
               indexed: false,
+              internalType: "string",
+              name: "cid",
+              type: "string",
+            },
+            {
+              indexed: false,
               internalType: "address",
               name: "author",
               type: "address",
@@ -29,6 +35,12 @@ const deployedContracts = {
               internalType: "uint256",
               name: "timestamp",
               type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "bytes32",
+              name: "messageHash",
+              type: "bytes32",
             },
           ],
           name: "PostCreated",
@@ -96,6 +108,11 @@ const deployedContracts = {
               name: "message",
               type: "string",
             },
+            {
+              internalType: "string",
+              name: "_cid",
+              type: "string",
+            },
           ],
           name: "post",
           outputs: [],
@@ -133,6 +150,11 @@ const deployedContracts = {
               type: "uint256",
             },
             {
+              internalType: "string",
+              name: "cid",
+              type: "string",
+            },
+            {
               internalType: "bytes32",
               name: "messageHash",
               type: "bytes32",
@@ -156,7 +178,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 1,
+      deployedOnBlock: 5,
     },
   },
 } as const;

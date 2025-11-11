@@ -26,7 +26,7 @@ const Home: NextPage = () => {
       await writeContractAsync(
         {
           functionName: "post",
-          args: [message, cid], // Pass CID to the post function
+          args: [message, cid],
         },
         {
           onBlockConfirmation: txnReceipt => {

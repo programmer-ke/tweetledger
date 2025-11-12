@@ -22,6 +22,7 @@ contract SocialFeed {
 
     function post(string memory message, string memory _cid) external {
         require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");
+        require(bytes(_cid).length > 0 && bytes(_cid).length <= 100, "CID must be 1-100 chars");
 
         uint256 id = nextId++;
         bytes32 messageHash = computeMessageHash(message, msg.sender, block.timestamp);

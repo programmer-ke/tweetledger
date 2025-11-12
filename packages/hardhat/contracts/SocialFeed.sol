@@ -52,7 +52,7 @@ contract SocialFeed {
     }
 
     function getPosts(uint256 startId, uint256 count) external view returns (Post[] memory) {
-        require(startId > 0 && startId <= tail, "Start ID does not exist");
+        require(startId >= 0 && startId <= tail, "Start ID does not exist");
 
         Post[] memory result = new Post[](count);
         uint256 currentId = startId;

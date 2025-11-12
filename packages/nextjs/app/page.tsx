@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import { uploadToIPFS } from "~~/actions/uploadToIPFS";
+import { SocialFeed } from "~~/components/SocialFeed";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
@@ -77,6 +78,7 @@ const Home: NextPage = () => {
             </>
           )}
         </div>
+        <SocialFeed />
       </div>
     </>
   );

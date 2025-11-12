@@ -28,35 +28,54 @@ describe("SocialFeed", function () {
   describe("Post", () => {
     it("Should create a post successfully", async () => {
       const message = "Hello, world!"; // <= 280 chars
-      await expect(socialFeed.connect(user).post(message))
+      const cid = "QmExampleCID"; // Mock CID
+      await expect(socialFeed.connect(user).post(message, cid))
         .to.emit(socialFeed, "PostCreated")
-        .withArgs(1, await user.getAddress(), anyValue);
+        .withArgs(1, cid, await user.getAddress(), anyValue, anyValue); // Include CID in event
 
       expect(await socialFeed.tail()).to.equal(1);
       const post = await socialFeed.posts(1);
       expect(post.id).to.equal(1);
       expect(post.author).to.equal(await user.getAddress());
       expect(post.prevId).to.equal(0); // First post
+      expect(post.cid).to.equal(cid); // Check CID
     });
 
     it("Should validate message length", async function () {
       const longMessage = "a".repeat(281); // >280
-      await expect(socialFeed.connect(user).post(longMessage)).to.be.reverted; // Reverts on invalid
+      await expect(socialFeed.connect(user).post(longMessage, "QmCID")).to.be.reverted; // Reverts on invalid
 
       const validMessage = "a".repeat(280);
-      await expect(socialFeed.connect(user).post(validMessage)).to.not.be.reverted;
+      await expect(socialFeed.connect(user).post(validMessage, "QmCID")).to.not.be.reverted;
+    });
+
+    it("Should validate CID length", async function () {
+      const validMessage = "Hello, world!";
+
+      // CID too short (length 0)
+      const emptyCid = "";
+      await expect(socialFeed.connect(user).post(validMessage, emptyCid)).to.be.revertedWith("CID must be 1-100 chars");
+
+      // CID too long (length 101)
+      const longCid = "a".repeat(101);
+      await expect(socialFeed.connect(user).post(validMessage, longCid)).to.be.revertedWith("CID must be 1-100 chars");
+
+      // Valid CID (e.g., length 12)
+      const validCid = "QmExampleCID";
+      await expect(socialFeed.connect(user).post(validMessage, validCid)).to.not.be.reverted;
     });
   });
 
   describe("Posting multiple", () => {
     it("Should update linked list on multiple posts", async () => {
-      await socialFeed.connect(user).post("First");
-      await socialFeed.connect(user).post("Second");
+      await socialFeed.connect(user).post("First", "QmCID1");
+      await socialFeed.connect(user).post("Second", "QmCID2");
 
       expect(await socialFeed.tail()).to.equal(2);
       expect(await socialFeed.head()).to.equal(1);
       const secondPost = await socialFeed.posts(2);
       expect(secondPost.prevId).to.equal(1);
+      expect(secondPost.cid).to.equal("QmCID2"); // Check CID
     });
   });
 
@@ -73,7 +92,8 @@ describe("SocialFeed", function () {
 
     it("Should store correct message hash in posts after posting", async () => {
       const message = "Test message";
-      await socialFeed.connect(user).post(message);
+      const cid = "QmCID"; // Mock CID
+      await socialFeed.connect(user).post(message, cid);
       const post = await socialFeed.posts(1);
       const expectedHash = await socialFeed.computeMessageHash(message, post.author, post.timestamp);
       expect(post.messageHash).to.equal(expectedHash);

@@ -12,15 +12,17 @@ contract SocialFeed {
         address author;
         uint256 timestamp;
         uint256 prevId; // Previous post ID in the linked list
+        string cid; // CID of the post content on IPFS
         bytes32 messageHash; // Hash of the message, author, and timestamp
     }
 
     mapping(uint256 => Post) public posts;
 
-    event PostCreated(uint256 id, address author, uint256 timestamp);
+    event PostCreated(uint256 id, string cid, address author, uint256 timestamp, bytes32 messageHash);
 
-    function post(string memory message) external {
+    function post(string memory message, string memory _cid) external {
         require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");
+        require(bytes(_cid).length > 0 && bytes(_cid).length <= 100, "CID must be 1-100 chars");
 
         uint256 id = nextId++;
         bytes32 messageHash = computeMessageHash(message, msg.sender, block.timestamp);
@@ -29,6 +31,7 @@ contract SocialFeed {
             author: msg.sender,
             timestamp: block.timestamp,
             prevId: tail,
+            cid: _cid,
             messageHash: messageHash
         });
 
@@ -37,7 +40,7 @@ contract SocialFeed {
         }
         tail = id;
 
-        emit PostCreated(id, msg.sender, block.timestamp);
+        emit PostCreated(id, _cid, msg.sender, block.timestamp, messageHash);
     }
 
     function computeMessageHash(

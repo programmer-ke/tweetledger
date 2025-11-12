@@ -20,6 +20,12 @@ const deployedContracts = {
             },
             {
               indexed: false,
+              internalType: "string",
+              name: "cid",
+              type: "string",
+            },
+            {
+              indexed: false,
               internalType: "address",
               name: "author",
               type: "address",
@@ -30,9 +36,44 @@ const deployedContracts = {
               name: "timestamp",
               type: "uint256",
             },
+            {
+              indexed: false,
+              internalType: "bytes32",
+              name: "messageHash",
+              type: "bytes32",
+            },
           ],
           name: "PostCreated",
           type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "author",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "computeMessageHash",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
         },
         {
           inputs: [],
@@ -65,6 +106,11 @@ const deployedContracts = {
             {
               internalType: "string",
               name: "message",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_cid",
               type: "string",
             },
           ],
@@ -102,6 +148,16 @@ const deployedContracts = {
               internalType: "uint256",
               name: "prevId",
               type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "cid",
+              type: "string",
+            },
+            {
+              internalType: "bytes32",
+              name: "messageHash",
+              type: "bytes32",
             },
           ],
           stateMutability: "view",

@@ -53,7 +53,7 @@ slice. Status uses markdown checkboxes:
   hash match. Deliverable: Post includes hash; console verifies
   integrity without IPFS.
 
-- [ ] **5. Integrate Client-Side IPFS Upload to Posting**  
+- [x] **5. Integrate Client-Side IPFS Upload to Posting**  
   End-to-end: Before tx, bundle `{"message": message}` JSON, upload
   via `@chainsafe/ipfs-http-client` to get CID, pass CID to updated
   `post(string message, string cid)`. Core: Pure util

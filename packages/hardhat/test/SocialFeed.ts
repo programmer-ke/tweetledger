@@ -48,6 +48,22 @@ describe("SocialFeed", function () {
       const validMessage = "a".repeat(280);
       await expect(socialFeed.connect(user).post(validMessage, "QmCID")).to.not.be.reverted;
     });
+
+    it("Should validate CID length", async function () {
+      const validMessage = "Hello, world!";
+
+      // CID too short (length 0)
+      const emptyCid = "";
+      await expect(socialFeed.connect(user).post(validMessage, emptyCid)).to.be.revertedWith("CID must be 1-100 chars");
+
+      // CID too long (length 101)
+      const longCid = "a".repeat(101);
+      await expect(socialFeed.connect(user).post(validMessage, longCid)).to.be.revertedWith("CID must be 1-100 chars");
+
+      // Valid CID (e.g., length 12)
+      const validCid = "QmExampleCID";
+      await expect(socialFeed.connect(user).post(validMessage, validCid)).to.not.be.reverted;
+    });
   });
 
   describe("Posting multiple", () => {

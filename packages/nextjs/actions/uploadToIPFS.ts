@@ -1,9 +1,6 @@
 "use server";
 
-import * as dotenv from "dotenv";
 import { PinataSDK } from "pinata";
-
-dotenv.config();
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT!,

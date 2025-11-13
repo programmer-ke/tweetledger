@@ -45,8 +45,8 @@ export const SocialFeed = () => {
           {posts && posts.length === 0 ? (
             <p className="text-center text-gray-500 text-sm sm:text-base py-8">No posts available.</p>
           ) : (
-            posts?.map((post, idx) => (
-              <div key={idx} className="card bg-base-100 shadow-lg p-3 sm:p-4">
+            posts?.map(post => (
+              <div key={post.id} className="card bg-base-100 shadow-lg p-3 sm:p-4">
                 <div className="card-body p-0">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                     <Address address={post.author} format="short" />

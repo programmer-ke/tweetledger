@@ -1,10 +1,7 @@
-import { useState } from "react";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 export const SocialFeed = () => {
-  const [posts, setPosts] = useState<any[]>([]);
-
   // Fetch tail ID using useScaffoldReadContract
   const {
     data: tail,
@@ -15,9 +12,9 @@ export const SocialFeed = () => {
     functionName: "tail",
   });
 
-  // Fetch posts using useScaffoldReadContract (manual trigger)
+  // Fetch posts using useScaffoldReadContract (now using data directly, no manual refetch)
   const {
-    refetch,
+    data: posts, // Renamed for clarity; directly use this instead of state
     isLoading: isPostsLoading,
     error: postsError,
   } = useScaffoldReadContract({
@@ -25,13 +22,6 @@ export const SocialFeed = () => {
     functionName: "getPosts",
     args: [tail || 0n, 5n], // Fetch 5 posts starting from tail
   });
-
-  const handleFetch = async () => {
-    const result = await refetch();
-    if (result.data) {
-      setPosts([...result.data]);
-    }
-  };
 
   if (tailError || postsError) {
     return (
@@ -44,26 +34,17 @@ export const SocialFeed = () => {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Social Feed</h2>
-      <button className="btn btn-primary mb-4" onClick={handleFetch} disabled={isTailLoading || isPostsLoading}>
-        {isPostsLoading ? (
-          <>
-            <span className="loading loading-spinner loading-sm"></span> Loading Posts...
-          </>
-        ) : (
-          "Fetch Latest Posts"
-        )}
-      </button>
 
-      {isTailLoading ? (
+      {isTailLoading || isPostsLoading ? (
         <div className="flex justify-center">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       ) : (
         <div className="space-y-4">
-          {posts.length === 0 ? (
+          {posts && posts.length === 0 ? (
             <p className="text-center text-gray-500">No posts available.</p>
           ) : (
-            posts.map((post, idx) => (
+            posts?.map((post, idx) => (
               <div key={idx} className="card bg-base-100 shadow-lg">
                 <div className="card-body">
                   <div className="flex items-center justify-between">

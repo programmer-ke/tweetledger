@@ -32,9 +32,7 @@ export const SocialFeed = () => {
   }
 
   return (
-    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
-      <h2 className="text-xl md:text-2xl font-bold mb-4 text-center sm:text-left">Social Feed</h2>
-
+    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
       {isTailLoading || isPostsLoading ? (
         <div className="flex justify-center py-8">
           <span className="loading loading-spinner loading-md sm:loading-lg"></span>

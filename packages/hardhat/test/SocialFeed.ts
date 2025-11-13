@@ -151,5 +151,20 @@ describe("SocialFeed", function () {
       expect(posts[0].id).to.equal(2);
       expect(posts[1].id).to.equal(1);
     });
+
+    it("Should return empty array when startId=0 and posts exist", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+
+      const posts = await socialFeed.getPosts(0, 5);
+
+      expect(posts.length).to.equal(0);
+    });
+
+    it("Should return empty array when no posts exist", async () => {
+      const tail = await socialFeed.tail(); // Should be 0
+      const posts = await socialFeed.getPosts(tail, 5);
+
+      expect(posts.length).to.equal(0);
+    });
   });
 });

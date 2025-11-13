@@ -20,7 +20,10 @@ export const SocialFeed = () => {
   } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "getPosts",
-    args: [tail || 0n, 5n], // Fetch 5 posts starting from tail
+    args: [tail, 5n], // Fetch 5 posts starting from tail
+    query: {
+      enabled: tail !== undefined,
+    },
   });
 
   if (tailError || postsError) {

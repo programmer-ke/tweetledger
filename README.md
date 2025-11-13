@@ -4,7 +4,7 @@
 
 Sovereign, permissionless and censorship resistant online townsquare.
 
-⚙️ Built on [Scaffold-ETH 2][eth] 🏗
+⚙️ Built on 🏗 [Scaffold-ETH 2][eth]
 
 [eth]: https://scaffoldeth.io/
 

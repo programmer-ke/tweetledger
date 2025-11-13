@@ -63,7 +63,7 @@ slice. Status uses markdown checkboxes:
 
 ## Retrieval & Feed
 
-- [ ] **6. Implement On-Chain Linked List Traversal View**  
+- [x] **6. Implement On-Chain Linked List Traversal View**  
   End-to-end: Add `getPosts(uint startId, uint count) view returns
   (Post[] memory)`: Traverse backward from startId (default tail) via
   prevId. Core: Pure Solidity loop logic (gas-unbounded). Shell:

@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import { uploadToIPFS } from "~~/actions/uploadToIPFS";
+import { SocialFeed } from "~~/components/SocialFeed";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
@@ -44,39 +45,42 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
+      <div className="flex items-center flex-col grow pt-6 sm:pt-8 md:pt-10 px-4 sm:px-5 md:px-6">
+        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mb-4 sm:mb-6 md:mb-8">
           {!connectedAddress ? (
-            <p className="text-center"> Connect your wallet to post</p>
+            <p className="text-center text-sm sm:text-base mb-4">Connect your wallet to post</p>
           ) : (
             <>
-              <div className="mb-1">
+              <div className="mb-3 sm:mb-4">
                 <textarea
                   id="message"
                   placeholder="What's on your mind?"
-                  className="textarea textarea-bordered w-full h-24 resize-none rounded-xl"
+                  className="textarea textarea-bordered w-full h-20 sm:h-24 resize-none rounded-xl text-sm sm:text-base"
                   maxLength={280}
                   value={message}
                   onChange={e => setMessage(e.target.value)}
                 />
-                <div className="text-right text-sm mt-1">{messageLength}/280</div>
+                <div className="text-right text-xs sm:text-sm mt-1 text-gray-600">{messageLength}/280</div>
               </div>
-              <button
-                className="btn btn-primary w-full rounded-xl"
-                disabled={!isValid || isPending}
-                onClick={handlePost}
-              >
-                {isPending ? (
-                  <>
-                    <span className="loading loading-spinner loading-sm"></span> Posting...
-                  </>
-                ) : (
-                  "Post"
-                )}
-              </button>
+              <div className="flex justify-end">
+                <button
+                  className="btn btn-primary w-full sm:w-auto sm:min-w-32 rounded-xl text-sm sm:text-base"
+                  disabled={!isValid || isPending}
+                  onClick={handlePost}
+                >
+                  {isPending ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span> Posting...
+                    </>
+                  ) : (
+                    "Post"
+                  )}
+                </button>
+              </div>
             </>
           )}
         </div>
+        <SocialFeed />
       </div>
     </>
   );

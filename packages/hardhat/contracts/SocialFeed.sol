@@ -50,4 +50,27 @@ contract SocialFeed {
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(message, author, timestamp));
     }
+
+    function getPosts(uint256 startId, uint256 count) external view returns (Post[] memory) {
+        require(startId >= 0 && startId <= tail, "Start ID does not exist");
+
+        Post[] memory result = new Post[](count);
+        uint256 currentId = startId;
+        uint256 index = 0;
+
+        while (currentId != 0 && index < count) {
+            result[index] = posts[currentId];
+            currentId = posts[currentId].prevId;
+            index++;
+        }
+
+        // Resize array if fewer posts than count
+        if (index < count) {
+            assembly {
+                mstore(result, index)
+            }
+        }
+
+        return result;
+    }
 }

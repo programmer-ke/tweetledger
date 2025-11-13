@@ -99,4 +99,72 @@ describe("SocialFeed", function () {
       expect(post.messageHash).to.equal(expectedHash);
     });
   });
+
+  describe("Retrieval", () => {
+    it("Should retrieve posts from tail with count=2 after 3 posts", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+      await socialFeed.connect(user).post("Post 2", "QmCID2");
+      await socialFeed.connect(user).post("Post 3", "QmCID3");
+
+      const tail = await socialFeed.tail(); // Should be 3
+      const posts = await socialFeed.getPosts(tail, 2);
+
+      expect(posts.length).to.equal(2);
+      expect(posts[0].id).to.equal(3); // Latest
+      expect(posts[1].id).to.equal(2); // Previous
+    });
+
+    it("Should retrieve posts from specific startId with count=1", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+      await socialFeed.connect(user).post("Post 2", "QmCID2");
+      await socialFeed.connect(user).post("Post 3", "QmCID3");
+
+      const posts = await socialFeed.getPosts(2, 1);
+
+      expect(posts.length).to.equal(1);
+      expect(posts[0].id).to.equal(2);
+    });
+
+    it("Should handle edge case: startId does not exist", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+
+      await expect(socialFeed.getPosts(999, 1)).to.be.revertedWith("Start ID does not exist");
+    });
+
+    it("Should handle edge case: count=0 returns empty array", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+
+      const tail = await socialFeed.tail();
+      const posts = await socialFeed.getPosts(tail, 0);
+
+      expect(posts.length).to.equal(0);
+    });
+
+    it("Should handle edge case: requesting more posts than available", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+      await socialFeed.connect(user).post("Post 2", "QmCID2");
+
+      const tail = await socialFeed.tail();
+      const posts = await socialFeed.getPosts(tail, 5); // Only 2 posts exist
+
+      expect(posts.length).to.equal(2);
+      expect(posts[0].id).to.equal(2);
+      expect(posts[1].id).to.equal(1);
+    });
+
+    it("Should return empty array when startId=0 and posts exist", async () => {
+      await socialFeed.connect(user).post("Post 1", "QmCID1");
+
+      const posts = await socialFeed.getPosts(0, 5);
+
+      expect(posts.length).to.equal(0);
+    });
+
+    it("Should return empty array when no posts exist", async () => {
+      const tail = await socialFeed.tail(); // Should be 0
+      const posts = await socialFeed.getPosts(tail, 5);
+
+      expect(posts.length).to.equal(0);
+    });
+  });
 });

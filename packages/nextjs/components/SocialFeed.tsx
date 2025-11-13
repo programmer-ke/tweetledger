@@ -25,36 +25,38 @@ export const SocialFeed = () => {
 
   if (tailError || postsError) {
     return (
-      <div className="alert alert-error">
-        <span>Error loading feed: {tailError?.message || postsError?.message}</span>
+      <div className="alert alert-error mx-4 sm:mx-6 md:mx-8">
+        <span className="text-sm sm:text-base">Error loading feed: {tailError?.message || postsError?.message}</span>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Social Feed</h2>
+    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 text-center sm:text-left">Social Feed</h2>
 
       {isTailLoading || isPostsLoading ? (
-        <div className="flex justify-center">
-          <span className="loading loading-spinner loading-lg"></span>
+        <div className="flex justify-center py-8">
+          <span className="loading loading-spinner loading-md sm:loading-lg"></span>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {posts && posts.length === 0 ? (
-            <p className="text-center text-gray-500">No posts available.</p>
+            <p className="text-center text-gray-500 text-sm sm:text-base py-8">No posts available.</p>
           ) : (
             posts?.map((post, idx) => (
-              <div key={idx} className="card bg-base-100 shadow-lg">
-                <div className="card-body">
-                  <div className="flex items-center justify-between">
+              <div key={idx} className="card bg-base-100 shadow-lg p-3 sm:p-4">
+                <div className="card-body p-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                     <Address address={post.author} format="short" />
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-0">
                       {new Date(Number(post.timestamp) * 1000).toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-lg">{post.cid ? `CID: ${post.cid}` : "Content unavailable"}</p>
-                  <p className="text-sm text-gray-400">Hash: {post.messageHash}</p>
+                  <p className="text-base sm:text-lg break-words">
+                    {post.cid ? `CID: ${post.cid}` : "Content unavailable"}
+                  </p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-all">Hash: {post.messageHash}</p>
                 </div>
               </div>
             ))

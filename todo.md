@@ -71,7 +71,7 @@ slice. Status uses markdown checkboxes:
   triggers query; display raw Post structs
   (ID/author/timestamp/CID/hash) in simple list—no resolution yet.
 
-- [ ] **7. Add Eager IPFS Resolution & Hash Verification to Feed**  
+- [>] **7. Add Eager IPFS Resolution & Hash Verification to Feed**  
   End-to-end: On `getPosts` success, parallel-fetch CIDs to JSON,
   recompute hash via core util, flag mismatches. Core: Pure
   `verifyPostIntegrity(post: Post, fetchedMessage: string):

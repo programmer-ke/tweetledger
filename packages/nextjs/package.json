@@ -13,7 +13,8 @@
     "start": "next dev",
     "vercel": "vercel --build-env YARN_ENABLE_IMMUTABLE_INSTALLS=false --build-env ENABLE_EXPERIMENTAL_COREPACK=1 --build-env VERCEL_TELEMETRY_DISABLED=1",
     "vercel:login": "vercel login",
-    "vercel:yolo": "vercel --build-env YARN_ENABLE_IMMUTABLE_INSTALLS=false --build-env ENABLE_EXPERIMENTAL_COREPACK=1 --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --build-env VERCEL_TELEMETRY_DISABLED=1"
+    "vercel:yolo": "vercel --build-env YARN_ENABLE_IMMUTABLE_INSTALLS=false --build-env ENABLE_EXPERIMENTAL_COREPACK=1 --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --build-env VERCEL_TELEMETRY_DISABLED=1",
+    "test": "jest"
   },
   "dependencies": {
     "@heroicons/react": "~2.1.5",
@@ -40,7 +41,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.0.15",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
     "@trivago/prettier-plugin-sort-imports": "~4.3.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "~18.19.50",
     "@types/react": "~19.0.7",
     "abitype": "1.0.6",
@@ -50,9 +55,12 @@
     "eslint-config-next": "~15.2.3",
     "eslint-config-prettier": "~10.1.1",
     "eslint-plugin-prettier": "~5.2.4",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "postcss": "~8.4.45",
     "prettier": "~3.5.3",
     "tailwindcss": "4.1.3",
+    "ts-node": "^10.9.2",
     "type-fest": "~4.26.1",
     "typescript": "~5.8.2",
     "vercel": "~39.1.3"

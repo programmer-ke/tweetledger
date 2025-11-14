@@ -1,4 +1,4 @@
-import { computeMessageHash } from "~~/lib/utils";
+import { Post, computeMessageHash, verifyPostIntegrity } from "~~/lib/utils";
 
 describe("computeMessageHash", () => {
   it("computes correct hash for valid inputs", () => {
@@ -27,5 +27,42 @@ describe("computeMessageHash", () => {
     const hash1 = computeMessageHash(message, "0x1234567890123456789012345678901234567890" as `0x${string}`, timestamp);
     const hash2 = computeMessageHash(message, "0xfb1733a1D882932c1E12685208903b6601E0b6f4" as `0x${string}`, timestamp);
     expect(hash1).not.toBe(hash2);
+  });
+});
+
+describe("verifyPostIntegrity", () => {
+  it("returns true for matching hash", () => {
+    const fetchedMessage = "test message";
+    const author = "0x1234567890123456789012345678901234567890" as `0x${string}`;
+    const timestamp = 1234567890n;
+    const messageHash = computeMessageHash(fetchedMessage, author, timestamp);
+
+    const post: Post = {
+      id: 1n,
+      author,
+      timestamp,
+      prevId: 0n,
+      cid: "Qm...",
+      messageHash,
+    };
+
+    expect(verifyPostIntegrity(post, fetchedMessage)).toBe(true);
+  });
+
+  it("returns false for mismatched hash", () => {
+    const post: Post = {
+      id: 1n,
+      author: "0x1234567890123456789012345678901234567890" as `0x${string}`,
+      timestamp: 1234567890n,
+      prevId: 0n,
+      cid: "Qm...",
+      messageHash: computeMessageHash(
+        "original message",
+        "0x1234567890123456789012345678901234567890" as `0x${string}`,
+        1234567890n,
+      ),
+    };
+    const tamperedMessage = "tampered message";
+    expect(verifyPostIntegrity(post, tamperedMessage)).toBe(false);
   });
 });

@@ -2,7 +2,7 @@ import { Address, encodePacked, keccak256 } from "viem";
 
 export type Post = {
   id: bigint;
-  author: string;
+  author: Address;
   timestamp: bigint;
   prevId: bigint;
   cid: string;

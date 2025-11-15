@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { verifyPostIntegrity } from "~~/lib/utils";
 
 export const SocialFeed = () => {
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
+
   // Fetch tail ID using useScaffoldReadContract
   const {
     data: tail,
@@ -25,6 +29,41 @@ export const SocialFeed = () => {
       enabled: tail !== undefined,
     },
   });
+
+  const [messageCache, setMessageCache] = useState<{ [cid: string]: string | null }>({});
+
+  useEffect(() => {
+    if (!posts || posts.length === 0) return;
+    const fetchMessages = async () => {
+      const promises = posts
+        .filter(post => !(post.cid in messageCache && messageCache[post.cid] !== null)) // only fetch non existing messages
+        .map(async post => {
+          try {
+            const response = await fetch(`https://${ipfsGateway}/ipfs/${post.cid}`);
+            if (!response.ok) throw new Error("Fetch failed");
+            const data = await response.json();
+            const message = data.message;
+            if (verifyPostIntegrity(post, message)) {
+              return { cid: post.cid, message };
+            } else {
+              console.warn(`Hash mismatch for CID ${post.cid}`);
+              return { cid: post.cid, message: null };
+            }
+          } catch (error) {
+            console.error(`Error fetching CID ${post.cid}:`, error);
+            return { cid: post.cid, message: null };
+          }
+        });
+      const results = await Promise.all(promises);
+      const newEntries: { [cid: string]: string | null } = {};
+      results.forEach(({ cid, message }) => {
+        newEntries[cid] = message;
+      });
+      setMessageCache(prev => ({ ...prev, ...newEntries }));
+    };
+    fetchMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ipfsGateway is static
+  }, [posts]);
 
   if (tailError || postsError) {
     return (
@@ -55,9 +94,11 @@ export const SocialFeed = () => {
                     </span>
                   </div>
                   <p className="text-base sm:text-lg break-words">
-                    {post.cid ? `CID: ${post.cid}` : "Content unavailable"}
+                    {messageCache[post.cid] !== undefined
+                      ? messageCache[post.cid] || "[Message unavailable]"
+                      : "Loading..."}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-all">Hash: {post.messageHash}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-all">#{post.id}</p>
                 </div>
               </div>
             ))

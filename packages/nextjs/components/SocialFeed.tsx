@@ -35,7 +35,7 @@ export const SocialFeed = () => {
     const fetchMessages = async () => {
       const newCache = { ...messageCache };
       const promises = posts
-        .filter(post => !(post.cid in newCache)) // Only fetch uncached CIDs
+        .filter(post => !(post.cid in newCache && newCache[post.cid])) // only fetch non existing messages
         .map(async post => {
           try {
             const response = await fetch(`https://ipfs.io/ipfs/${post.cid}`);
@@ -92,7 +92,7 @@ export const SocialFeed = () => {
                   </div>
                   <p className="text-base sm:text-lg break-words">
                     {messageCache[post.cid] !== undefined
-                      ? messageCache[post.cid] || "Message unavailable—verify CID"
+                      ? messageCache[post.cid] || "[Message unavailable]"
                       : "Loading..."}
                   </p>
                   <p className="text-xs sm:text-sm text-gray-400 break-all">Hash: {post.messageHash}</p>

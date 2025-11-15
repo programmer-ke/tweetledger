@@ -97,7 +97,7 @@ export const SocialFeed = () => {
                       ? messageCache[post.cid] || "[Message unavailable]"
                       : "Loading..."}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-all">Hash: {post.messageHash}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 break-all">#{post.id}</p>
                 </div>
               </div>
             ))

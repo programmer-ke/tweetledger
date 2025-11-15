@@ -1,4 +1,4 @@
-import { encodePacked, keccak256 } from "viem";
+import { Address, encodePacked, keccak256 } from "viem";
 
 export type Post = {
   id: bigint;
@@ -9,7 +9,7 @@ export type Post = {
   messageHash: `0x${string}`;
 };
 
-export function computeMessageHash(message: string, author: string, timestamp: bigint): `0x${string}` {
+export function computeMessageHash(message: string, author: Address, timestamp: bigint): `0x${string}` {
   return keccak256(encodePacked(["string", "address", "uint256"], [message, author, timestamp]));
 }
 

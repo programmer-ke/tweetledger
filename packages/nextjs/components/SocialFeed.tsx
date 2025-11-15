@@ -37,7 +37,7 @@ export const SocialFeed = () => {
     const fetchMessages = async () => {
       const newCache = { ...messageCache };
       const promises = posts
-        .filter(post => !(post.cid in newCache && newCache[post.cid])) // only fetch non existing messages
+        .filter(post => !(post.cid in newCache && newCache[post.cid] !== null)) // only fetch non existing messages
         .map(async post => {
           try {
             const response = await fetch(`https://${ipfsGateway}/ipfs/${post.cid}`);

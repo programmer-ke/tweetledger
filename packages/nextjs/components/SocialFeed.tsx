@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { verifyPostIntegrity } from "~~/lib/utils";
 
 export const SocialFeed = () => {
   // Fetch tail ID using useScaffoldReadContract
@@ -25,6 +27,40 @@ export const SocialFeed = () => {
       enabled: tail !== undefined,
     },
   });
+
+  const [messageCache, setMessageCache] = useState<{ [cid: string]: string | null }>({});
+
+  useEffect(() => {
+    if (!posts || posts.length === 0) return;
+    const fetchMessages = async () => {
+      const newCache = { ...messageCache };
+      const promises = posts
+        .filter(post => !(post.cid in newCache)) // Only fetch uncached CIDs
+        .map(async post => {
+          try {
+            const response = await fetch(`https://ipfs.io/ipfs/${post.cid}`);
+            if (!response.ok) throw new Error("Fetch failed");
+            const data = await response.json();
+            const message = data.message;
+            if (verifyPostIntegrity(post, message)) {
+              return { cid: post.cid, message };
+            } else {
+              console.warn(`Hash mismatch for CID ${post.cid}`);
+              return { cid: post.cid, message: null };
+            }
+          } catch (error) {
+            console.error(`Error fetching CID ${post.cid}:`, error);
+            return { cid: post.cid, message: null };
+          }
+        });
+      const results = await Promise.all(promises);
+      results.forEach(({ cid, message }) => {
+        newCache[cid] = message;
+      });
+      setMessageCache(newCache);
+    };
+    fetchMessages();
+  }, [posts]);
 
   if (tailError || postsError) {
     return (
@@ -55,7 +91,9 @@ export const SocialFeed = () => {
                     </span>
                   </div>
                   <p className="text-base sm:text-lg break-words">
-                    {post.cid ? `CID: ${post.cid}` : "Content unavailable"}
+                    {messageCache[post.cid] !== undefined
+                      ? messageCache[post.cid] || "Message unavailable—verify CID"
+                      : "Loading..."}
                   </p>
                   <p className="text-xs sm:text-sm text-gray-400 break-all">Hash: {post.messageHash}</p>
                 </div>

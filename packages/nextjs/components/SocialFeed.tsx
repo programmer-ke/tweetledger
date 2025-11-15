@@ -4,6 +4,8 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { verifyPostIntegrity } from "~~/lib/utils";
 
 export const SocialFeed = () => {
+  const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
+
   // Fetch tail ID using useScaffoldReadContract
   const {
     data: tail,
@@ -38,7 +40,7 @@ export const SocialFeed = () => {
         .filter(post => !(post.cid in newCache && newCache[post.cid])) // only fetch non existing messages
         .map(async post => {
           try {
-            const response = await fetch(`https://ipfs.io/ipfs/${post.cid}`);
+            const response = await fetch(`https://${ipfsGateway}/ipfs/${post.cid}`);
             if (!response.ok) throw new Error("Fetch failed");
             const data = await response.json();
             const message = data.message;

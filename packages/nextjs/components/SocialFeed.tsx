@@ -62,6 +62,7 @@ export const SocialFeed = () => {
       setMessageCache(newCache);
     };
     fetchMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts]);
 
   if (tailError || postsError) {

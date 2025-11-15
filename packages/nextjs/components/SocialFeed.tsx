@@ -35,9 +35,8 @@ export const SocialFeed = () => {
   useEffect(() => {
     if (!posts || posts.length === 0) return;
     const fetchMessages = async () => {
-      const newCache = { ...messageCache };
       const promises = posts
-        .filter(post => !(post.cid in newCache && newCache[post.cid] !== null)) // only fetch non existing messages
+        .filter(post => !(post.cid in messageCache && messageCache[post.cid] !== null)) // only fetch non existing messages
         .map(async post => {
           try {
             const response = await fetch(`https://${ipfsGateway}/ipfs/${post.cid}`);
@@ -56,13 +55,14 @@ export const SocialFeed = () => {
           }
         });
       const results = await Promise.all(promises);
+      const newEntries: { [cid: string]: string | null } = {};
       results.forEach(({ cid, message }) => {
-        newCache[cid] = message;
+        newEntries[cid] = message;
       });
-      setMessageCache(newCache);
+      setMessageCache(prev => ({ ...prev, ...newEntries }));
     };
     fetchMessages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ipfsGateway is static
   }, [posts]);
 
   if (tailError || postsError) {

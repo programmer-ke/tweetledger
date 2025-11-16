@@ -81,45 +81,15 @@ slice. Status uses markdown checkboxes:
 
 ## Real-Time & Polish
 
-- [ ] **8. Enable Event-Driven Real-Time Feed Updates**  
-  End-to-end: Emit full `PostCreated(uint id, string cid, address
-  author, uint timestamp, bytes32 hash)`; subscribe via
-  `useContractEvent`. Core: Pure event parser util
-  `parsePostEvent(log: Log): Post`. Shell: Append event payload to
-  `useState` feed array on emit. Deliverable: Post from another
-  wallet/tab auto-appends to feed; manual refresh re-queries
-  `getPosts` from tail.
+- [x] **8. Enable Event-Driven Real-Time Feed Updates**
+  Use Scaffold-ETH's `useReadContract` hook to receive new posts
+  when new blocks are generated.
 
-- [ ] **9. Add UI Polish: Validation, Feedback, & Refresh**  
-  End-to-end: Client-side char limit/disable submit; pending spinner
-  on tx; generic toast errors; subtle "Posted!" on success; "Refresh
-  Feed" button for full re-sync. Core: Pure `isValidMessage(msg:
-  string): {valid: boolean, length: number}`. Shell: Integrate toasts
-  via react-hot-toast; state merge historical + events. Deliverable:
-  Polished post form/feed; handles failures gracefully, gaps via
-  refresh.
+- [ ] **9. Add functionlity for loading more historical posts***
+  Currently, only the latest 5 posts are displayed. We need functionality
+  to allow a user to navigate past these to more historical posts
 
 ## Testing & Deployment
 
-- [ ] **10. Write Core Unit Tests for Business Logic**  
-  End-to-end: Foundry tests for contract (length validate, hash
-  compute, traversal); Jest for JS utils (hash/verify/json
-  bundle). Core: All pure fns tested in isolation (no deps). Shell:
-  Run via `yarn test`; integrate to CI if setup. Deliverable: 100%
-  coverage on core; README smoke test script for manual E2E
-  (post/retrieve/verify).
-
-- [ ] **11. Deploy to Sepolia & Document Onboarding**  
-  End-to-end: Update Hardhat config for Sepolia; deploy via `yarn
-  deploy --network sepolia`. Core: N/A (infra). Shell: Update wagmi
-  config for testnet; add README with local/run + Sepolia
-  faucet/wallet steps. Deliverable: Live demo URL; devs can
-  clone/deploy/post in <5min; note limitations (IPFS pinning, gas
-  scale).
-
-- [ ] **12. Final Validation & Enhancements Teaser**  
-  End-to-end: Manual demo run: 10 posts, verify feed/events/IPFS; stub
-  XMTP integration comment in code. Core: Pure
-  `simulateFeedTraversal(posts: Post[]): Post[]` for perf mock. Shell:
-  Add console perf logs. Deliverable: POC "done" badge in repo;
-  PRD-linked issues for XMTP future.
+- [ ] **11. Deploy to Test environment**
+  Deploy the contract to Sepolia and web app to Vercel/Akash

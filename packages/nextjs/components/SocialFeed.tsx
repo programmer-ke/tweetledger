@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { verifyPostIntegrity } from "~~/lib/utils";
 
 export const SocialFeed = () => {
   const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const [count, setCount] = useState(5n);
+  const [messageCache, setMessageCache] = useState<{ [cid: string]: string | null }>({});
+  const [shouldScroll, setShouldScroll] = useState(false);
 
   // Fetch tail ID using useScaffoldReadContract
   const {
@@ -18,19 +23,19 @@ export const SocialFeed = () => {
 
   // Fetch posts using useScaffoldReadContract (now using data directly, no manual refetch)
   const {
-    data: posts, // Renamed for clarity; directly use this instead of state
+    data: posts,
     isLoading: isPostsLoading,
     error: postsError,
   } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "getPosts",
-    args: [tail, 5n], // Fetch 5 posts starting from tail
+    args: [tail, count], // Fetch `count` posts starting from tail
     query: {
       enabled: tail !== undefined,
     },
   });
 
-  const [messageCache, setMessageCache] = useState<{ [cid: string]: string | null }>({});
+  const hasUnloadedPosts = posts !== undefined && posts.length > 0 && posts[posts.length - 1].id > 1;
 
   useEffect(() => {
     if (!posts || posts.length === 0) return;
@@ -62,8 +67,17 @@ export const SocialFeed = () => {
       setMessageCache(prev => ({ ...prev, ...newEntries }));
     };
     fetchMessages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- ipfsGateway is static
-  }, [posts]);
+
+    // scroll to the bottom if necessary
+    if (shouldScroll) {
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+      setShouldScroll(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts, ipfsGateway, shouldScroll]);
 
   if (tailError || postsError) {
     return (
@@ -80,30 +94,48 @@ export const SocialFeed = () => {
           <span className="loading loading-spinner loading-md sm:loading-lg"></span>
         </div>
       ) : (
-        <div className="space-y-3 sm:space-y-4">
-          {posts && posts.length === 0 ? (
-            <p className="text-center text-gray-500 text-sm sm:text-base py-8">No posts available.</p>
-          ) : (
-            posts?.map(post => (
-              <div key={post.id} className="card bg-base-100 shadow-lg p-3 sm:p-4">
-                <div className="card-body p-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                    <Address address={post.author} format="short" />
-                    <span className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-0">
-                      {new Date(Number(post.timestamp) * 1000).toLocaleString()}
-                    </span>
+        <>
+          <div className="space-y-3 sm:space-y-4">
+            {posts && posts.length === 0 ? (
+              <p className="text-center text-gray-500 text-sm sm:text-base py-8">No posts available.</p>
+            ) : (
+              posts?.map(post => (
+                <div key={post.id} className="card bg-base-100 shadow-lg p-3 sm:p-4">
+                  <div className="card-body p-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                      <Address address={post.author} format="short" />
+                      <span className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-0">
+                        {new Date(Number(post.timestamp) * 1000).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-base sm:text-lg break-words">
+                      {messageCache[post.cid] !== undefined
+                        ? messageCache[post.cid] || "[Message unavailable]"
+                        : "Loading..."}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-400 break-all">#{post.id}</p>
                   </div>
-                  <p className="text-base sm:text-lg break-words">
-                    {messageCache[post.cid] !== undefined
-                      ? messageCache[post.cid] || "[Message unavailable]"
-                      : "Loading..."}
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-400 break-all">#{post.id}</p>
                 </div>
-              </div>
-            ))
+              ))
+            )}
+          </div>
+
+          <div ref={bottomRef} />
+
+          {hasUnloadedPosts && (
+            <div className="flex justify-center mt-4">
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => {
+                  setCount(prev => prev + 5n);
+                  setShouldScroll(true);
+                }}
+              >
+                Load more
+              </button>
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

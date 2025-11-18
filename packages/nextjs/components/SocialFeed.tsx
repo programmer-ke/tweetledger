@@ -66,15 +66,18 @@ export const SocialFeed = () => {
       });
       setMessageCache(prev => ({ ...prev, ...newEntries }));
     };
-    fetchMessages();
 
-    // scroll to the bottom if necessary
-    if (shouldScroll) {
-      setTimeout(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-      setShouldScroll(false);
-    }
+    (async () => {
+      await fetchMessages();
+
+      // scroll to the bottom if necessary
+      if (shouldScroll) {
+        setTimeout(() => {
+          bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+        setShouldScroll(false);
+      }
+    })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts, ipfsGateway, shouldScroll]);

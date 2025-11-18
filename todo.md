@@ -85,7 +85,7 @@ slice. Status uses markdown checkboxes:
   Use Scaffold-ETH's `useReadContract` hook to receive new posts
   when new blocks are generated.
 
-- [ ] **9. Add functionlity for loading more historical posts***
+- [x] **9. Add functionality for loading more historical posts**
   Currently, only the latest 5 posts are displayed. We need functionality
   to allow a user to navigate past these to more historical posts
 

@@ -4249,6 +4249,7 @@ __metadata:
     "@types/react": ~19.0.7
     "@uniswap/sdk-core": ~5.8.2
     "@uniswap/v2-sdk": ~4.6.1
+    "@xmtp/browser-sdk": ^5.0.1
     abitype: 1.0.6
     autoprefixer: ~10.4.20
     bgipfs: ~0.0.12
@@ -6406,6 +6407,66 @@ __metadata:
     multiformats: ^13.3.1
     uint8arrays: ^5.1.0
   checksum: 547d30007132bbfeaf3c0af608db05f2bda595525a269077d9b19add11e513e7d0290b2cea63db1e33dbf7eb919c99d71d448f83591a27786e3627c8cbf9d10f
+  languageName: node
+  linkType: hard
+
+"@xmtp/browser-sdk@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@xmtp/browser-sdk@npm:5.0.1"
+  dependencies:
+    "@xmtp/content-type-group-updated": ^2.0.2
+    "@xmtp/content-type-primitives": ^2.0.2
+    "@xmtp/content-type-text": ^2.0.2
+    "@xmtp/wasm-bindings": 1.5.4
+    uuid: ^11.1.0
+  checksum: 3789a75c3bbe47f8ea8add53acd457b6c31d9039176642de207924296a757c4480c7750741200a01d22c7a40e9789d5297bb4eaca9a672b113bf2540ff2a4314
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-group-updated@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@xmtp/content-type-group-updated@npm:2.0.2"
+  dependencies:
+    "@xmtp/content-type-primitives": ^2.0.2
+    "@xmtp/proto": ^3.78.0
+  checksum: 88ffce220ab1b1112e002d39e85ed8493629c354587732fd17a39e6757abe94d3390c4f183f683f0360888ae94fcafe9bdf422920d7fd28baf15aa9c3cdb6330
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-primitives@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@xmtp/content-type-primitives@npm:2.0.2"
+  dependencies:
+    "@xmtp/proto": ^3.78.0
+  checksum: 4e3581ef9e23864bf741705d6011613c6c0b2670b7431f55033769514f0879ff4573d1b442a858cbdd4ee1e493d6fe070ebe8cbd9577a505cd89d2d89e085f97
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-text@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@xmtp/content-type-text@npm:2.0.2"
+  dependencies:
+    "@xmtp/content-type-primitives": ^2.0.2
+  checksum: 8443ca0c19f95382fdd7345cc8b810f9d1476b206aaec8dbedd1ae36a0e7d997e25d04de6616e8779bf14d8de59a8aa8658ca29014dc0bf71f354069d4d4c959
+  languageName: node
+  linkType: hard
+
+"@xmtp/proto@npm:^3.78.0":
+  version: 3.87.0
+  resolution: "@xmtp/proto@npm:3.87.0"
+  dependencies:
+    long: ^5.2.0
+    protobufjs: ^7.0.0
+    rxjs: ^7.8.0
+    undici: ^5.8.1
+  checksum: 8ab1bd9ac522936ced8fce1e15852af59c9b3e2992382a03f7bc02df7339b34bccf5d7e67245c2ddc8252c6c32adc20b93888b84e9d16840fcd55b864c40e016
+  languageName: node
+  linkType: hard
+
+"@xmtp/wasm-bindings@npm:1.5.4":
+  version: 1.5.4
+  resolution: "@xmtp/wasm-bindings@npm:1.5.4"
+  checksum: 994bcfcd848055d2817968be2c14d8d5f448155fb0137313bc84a4ad55e3d9f0bbb62a555b69bf5f7e6f0e3a7408e3ded9a39bee8f47ce78dbf2aaa1acef3e8f
   languageName: node
   linkType: hard
 
@@ -13913,7 +13974,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:^5.0.0":
+"long@npm:^5.0.0, long@npm:^5.2.0":
   version: 5.3.2
   resolution: "long@npm:5.3.2"
   checksum: be215816b563f4ca27ad3677678b53415bc489f9e3466414e54d2d85f5f8e86768547fa58493bacfb363ffc57a664debc83403ccc2178aef0c40aca28bad47c9
@@ -16184,7 +16245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^7.1.2":
+"protobufjs@npm:^7.0.0, protobufjs@npm:^7.1.2":
   version: 7.5.4
   resolution: "protobufjs@npm:7.5.4"
   dependencies:
@@ -18901,7 +18962,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^5.14.0":
+"undici@npm:^5.14.0, undici@npm:^5.8.1":
   version: 5.29.0
   resolution: "undici@npm:5.29.0"
   dependencies:
@@ -19217,6 +19278,15 @@ __metadata:
   bin:
     uuid: ./bin/uuid
   checksum: 8793629d2799f500aeea9fcd0aec6c4e9fbcc4d62ed42159ad96be345c3fffac1bbf61a23e18e2782600884fee05e6d4012ce4b70d0037c8e987533ae6a77870
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "uuid@npm:11.1.0"
+  bin:
+    uuid: dist/esm/bin/uuid
+  checksum: 840f19758543c4631e58a29439e51b5b669d5f34b4dd2700b6a1d15c5708c7a6e0c3e2c8c4a2eae761a3a7caa7e9884d00c86c02622ba91137bd3deade6b4b4a
   languageName: node
   linkType: hard
 

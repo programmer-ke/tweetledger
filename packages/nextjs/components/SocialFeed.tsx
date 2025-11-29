@@ -195,7 +195,12 @@ export const SocialFeed = () => {
                         ? messageCache[post.cid] || "[Message unavailable]"
                         : "Loading..."}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-400 break-all">#{post.id}</p>
+                    <p className="text-xs sm:text-sm text-gray-400 break-all">
+                      #{post.id} |{" "}
+                      <a target="_blank" href={`https://${ipfsGateway}/ipfs/${post.cid}`}>
+                        IPFS
+                      </a>
+                    </p>
                   </div>
                 </div>
               ))

@@ -43,10 +43,15 @@ export const SocialFeed = () => {
   });
 
   const displayedPostsRef = useRef<any[]>([]);
+  const connectedAddressRef = useRef<string | undefined>(connectedAddress);
 
   useEffect(() => {
     displayedPostsRef.current = displayedPosts;
   }, [displayedPosts]);
+
+  useEffect(() => {
+    connectedAddressRef.current = connectedAddress;
+  }, [connectedAddress]);
 
   useScaffoldWatchContractEvent({
     contractName: "SocialFeed",
@@ -63,7 +68,7 @@ export const SocialFeed = () => {
             const latestDisplayedPost = currentPosts[0];
             if (latestDisplayedPost["id"] !== log.args["id"]) {
               // We have a new post
-              if (log.args["author"]?.toLowerCase() === connectedAddress?.toLowerCase()) {
+              if (log.args["author"]?.toLowerCase() === connectedAddressRef.current?.toLowerCase()) {
                 // event from currently connected user
                 // update feed
                 refetchTail();

@@ -89,9 +89,29 @@ slice. Status uses markdown checkboxes:
   Currently, only the latest 5 posts are displayed. We need functionality
   to allow a user to navigate past these to more historical posts
   
-- [>] **Refine Feed updates**
+- [x] **Refine Feed updates**
   Instead of reloading the whole feed when contract updates, allow
   user to instead load more historical or new updates
+  
+- [ ] **UI enhancements**
+  - Show newlines in posts
+  - Show link to ipfs for each post
+  - Show DM (coming soon) option in main menu
+  - Configurable Branding
+  - Footer links
+  
+## Incentives
+
+- [ ] **Collections and rewards system**
+  - Set cost per post (spam prevention)
+  - Set up automatic rewards system
+  - Set up owner balance withdrawal
+
+## NSFW handling
+
+- [ ] **Add a simple profanity filtering**
+
+
 
 ## Testing & Deployment
 

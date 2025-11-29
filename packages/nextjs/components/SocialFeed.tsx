@@ -92,7 +92,7 @@ export const SocialFeed = () => {
     if (tail !== undefined) {
       refetchPosts();
     }
-  }, [tail]);
+  }, [tail, refetchPosts]);
 
   const hasUnloadedPosts = displayedPosts.length > 0 && displayedPosts[displayedPosts.length - 1].id > 1;
 

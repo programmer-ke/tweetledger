@@ -42,6 +42,12 @@ export const SocialFeed = () => {
     },
   });
 
+  const displayedPostsRef = useRef<any[]>([]);
+
+  useEffect(() => {
+    displayedPostsRef.current = displayedPosts;
+  }, [displayedPosts]);
+
   useScaffoldWatchContractEvent({
     contractName: "SocialFeed",
     eventName: "PostCreated",
@@ -51,9 +57,10 @@ export const SocialFeed = () => {
       try {
         logs.forEach(log => {
           console.log(log.args);
-          if (displayedPosts.length > 0) {
+          const currentPosts = displayedPostsRef.current;
+          if (currentPosts.length > 0) {
             // we have displayed posts
-            const latestDisplayedPost = displayedPosts[0];
+            const latestDisplayedPost = currentPosts[0];
             if (latestDisplayedPost["id"] !== log.args["id"]) {
               // We have a new post
               if (log.args["author"] === connectedAddress) {

@@ -33,6 +33,12 @@ const deployedContracts = {
             {
               indexed: false,
               internalType: "uint256",
+              name: "prevId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
               name: "timestamp",
               type: "uint256",
             },

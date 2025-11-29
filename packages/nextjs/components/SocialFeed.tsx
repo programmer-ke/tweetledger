@@ -190,7 +190,7 @@ export const SocialFeed = () => {
                         {new Date(Number(post.timestamp) * 1000).toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-base sm:text-lg break-words">
+                    <p className="text-base sm:text-lg break-words whitespace-pre-wrap">
                       {messageCache[post.cid] !== undefined
                         ? messageCache[post.cid] || "[Message unavailable]"
                         : "Loading..."}

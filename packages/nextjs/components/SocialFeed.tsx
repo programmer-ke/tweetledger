@@ -63,7 +63,7 @@ export const SocialFeed = () => {
             const latestDisplayedPost = currentPosts[0];
             if (latestDisplayedPost["id"] !== log.args["id"]) {
               // We have a new post
-              if (log.args["author"] === connectedAddress) {
+              if (log.args["author"]?.toLowerCase() === connectedAddress?.toLowerCase()) {
                 // event from currently connected user
                 // update feed
                 refetchTail();

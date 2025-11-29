@@ -67,7 +67,6 @@ export const SocialFeed = () => {
                 // event from currently connected user
                 // update feed
                 refetchTail();
-                refetchPosts();
               } else {
                 setHasNewPosts(true);
               }
@@ -75,7 +74,6 @@ export const SocialFeed = () => {
           } else {
             // No posts so far, reload
             refetchTail();
-            refetchPosts();
           }
         });
       } catch (error) {
@@ -89,6 +87,12 @@ export const SocialFeed = () => {
     setDisplayedPosts([...posts]);
     setHasNewPosts(false);
   }, [posts]);
+
+  useEffect(() => {
+    if (tail !== undefined) {
+      refetchPosts();
+    }
+  }, [tail]);
 
   const hasUnloadedPosts = displayedPosts.length > 0 && displayedPosts[displayedPosts.length - 1].id > 1;
 
@@ -161,7 +165,6 @@ export const SocialFeed = () => {
                   disabled={isTailLoading || isPostsLoading}
                   onClick={() => {
                     refetchTail();
-                    refetchPosts();
                   }}
                 >
                   {" "}

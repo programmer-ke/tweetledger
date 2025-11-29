@@ -18,7 +18,7 @@ contract SocialFeed {
 
     mapping(uint256 => Post) public posts;
 
-    event PostCreated(uint256 id, string cid, address author, uint256 timestamp, bytes32 messageHash);
+    event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
 
     function post(string memory message, string memory _cid) external {
         require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");
@@ -40,7 +40,7 @@ contract SocialFeed {
         }
         tail = id;
 
-        emit PostCreated(id, _cid, msg.sender, block.timestamp, messageHash);
+        emit PostCreated(id, _cid, msg.sender, tail - 1, block.timestamp, messageHash);
     }
 
     function computeMessageHash(

@@ -31,14 +31,14 @@ describe("SocialFeed", function () {
       const cid = "QmExampleCID"; // Mock CID
       await expect(socialFeed.connect(user).post(message, cid))
         .to.emit(socialFeed, "PostCreated")
-        .withArgs(1, cid, await user.getAddress(), anyValue, anyValue); // Include CID in event
+        .withArgs(1, cid, await user.getAddress(), 0, anyValue, anyValue);
 
       expect(await socialFeed.tail()).to.equal(1);
       const post = await socialFeed.posts(1);
       expect(post.id).to.equal(1);
       expect(post.author).to.equal(await user.getAddress());
       expect(post.prevId).to.equal(0); // First post
-      expect(post.cid).to.equal(cid); // Check CID
+      expect(post.cid).to.equal(cid);
     });
 
     it("Should validate message length", async function () {

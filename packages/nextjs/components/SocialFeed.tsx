@@ -1,46 +1,94 @@
 import { useEffect, useRef, useState } from "react";
+import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useScaffoldReadContract, useScaffoldWatchContractEvent } from "~~/hooks/scaffold-eth";
 import { verifyPostIntegrity } from "~~/lib/utils";
 
 export const SocialFeed = () => {
+  const { address: connectedAddress } = useAccount();
   const ipfsGateway = process.env.NEXT_PUBLIC_PINATA_GATEWAY;
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const [count, setCount] = useState(5n);
   const [messageCache, setMessageCache] = useState<{ [cid: string]: string | null }>({});
   const [shouldScroll, setShouldScroll] = useState(false);
+  const [displayedPosts, setDisplayedPosts] = useState<any[]>([]);
+  const [hasNewPosts, setHasNewPosts] = useState(false);
 
   // Fetch tail ID using useScaffoldReadContract
   const {
     data: tail,
     isLoading: isTailLoading,
     error: tailError,
+    refetch: refetchTail,
   } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "tail",
+    watch: false,
   });
 
-  // Fetch posts using useScaffoldReadContract (now using data directly, no manual refetch)
   const {
     data: posts,
     isLoading: isPostsLoading,
     error: postsError,
+    refetch: refetchPosts,
   } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "getPosts",
-    args: [tail, count], // Fetch `count` posts starting from tail
+    args: [tail, count],
+    watch: false,
     query: {
       enabled: tail !== undefined,
     },
   });
 
-  const hasUnloadedPosts = posts !== undefined && posts.length > 0 && posts[posts.length - 1].id > 1;
+  useScaffoldWatchContractEvent({
+    contractName: "SocialFeed",
+    eventName: "PostCreated",
+
+    // Monitor's contract for new posts
+    onLogs: logs => {
+      try {
+        logs.forEach(log => {
+          console.log(log.args);
+          if (displayedPosts.length > 0) {
+            // we have displayed posts
+            const latestDisplayedPost = displayedPosts[0];
+            if (latestDisplayedPost["id"] !== log.args["id"]) {
+              // We have a new post
+              if (log.args["author"] === connectedAddress) {
+                // event from currently connected user
+                // update feed
+                refetchTail();
+                refetchPosts();
+              } else {
+                setHasNewPosts(true);
+              }
+            }
+          } else {
+            // No posts so far, reload
+            refetchTail();
+            refetchPosts();
+          }
+        });
+      } catch (error) {
+        console.error("Error watching events", error);
+      }
+    },
+  });
 
   useEffect(() => {
-    if (!posts || posts.length === 0) return;
+    if (!posts) return;
+    setDisplayedPosts([...posts]);
+    setHasNewPosts(false);
+  }, [posts]);
+
+  const hasUnloadedPosts = displayedPosts.length > 0 && displayedPosts[displayedPosts.length - 1].id > 1;
+
+  useEffect(() => {
+    if (!displayedPosts || displayedPosts.length === 0) return;
     const fetchMessages = async () => {
-      const promises = posts
+      const promises = displayedPosts
         .filter(post => !(post.cid in messageCache && messageCache[post.cid] !== null)) // only fetch non existing messages
         .map(async post => {
           try {
@@ -74,13 +122,13 @@ export const SocialFeed = () => {
       if (shouldScroll) {
         setTimeout(() => {
           bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        }, 1000);
         setShouldScroll(false);
       }
     })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posts, ipfsGateway, shouldScroll]);
+  }, [displayedPosts, ipfsGateway, shouldScroll]);
 
   if (tailError || postsError) {
     return (
@@ -99,10 +147,26 @@ export const SocialFeed = () => {
       ) : (
         <>
           <div className="space-y-3 sm:space-y-4">
-            {posts && posts.length === 0 ? (
+            {hasNewPosts && (
+              <div className="flex justify-center mt-4">
+                <button
+                  className="btn btn-outline btn-sm"
+                  disabled={isTailLoading || isPostsLoading}
+                  onClick={() => {
+                    refetchTail();
+                    refetchPosts();
+                  }}
+                >
+                  {" "}
+                  {isTailLoading || isPostsLoading ? "Loading.." : "Load new posts"}
+                </button>
+              </div>
+            )}
+
+            {displayedPosts && displayedPosts.length === 0 ? (
               <p className="text-center text-gray-500 text-sm sm:text-base py-8">No posts available.</p>
             ) : (
-              posts?.map(post => (
+              displayedPosts?.map(post => (
                 <div key={post.id} className="card bg-base-100 shadow-lg p-3 sm:p-4">
                   <div className="card-body p-0">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
@@ -129,12 +193,13 @@ export const SocialFeed = () => {
             <div className="flex justify-center mt-4">
               <button
                 className="btn btn-outline btn-sm"
+                disabled={isTailLoading || isPostsLoading}
                 onClick={() => {
-                  setCount(prev => prev + 5n);
+                  setCount(BigInt(displayedPosts.length) + 5n);
                   setShouldScroll(true);
                 }}
               >
-                Load more
+                {isTailLoading || isPostsLoading ? "Loading.." : "Load more"}
               </button>
             </div>
           )}

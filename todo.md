@@ -88,6 +88,10 @@ slice. Status uses markdown checkboxes:
 - [x] **9. Add functionality for loading more historical posts**
   Currently, only the latest 5 posts are displayed. We need functionality
   to allow a user to navigate past these to more historical posts
+  
+- [>] **Refine Feed updates**
+  Instead of reloading the whole feed when contract updates, allow
+  user to instead load more historical or new updates
 
 ## Testing & Deployment
 

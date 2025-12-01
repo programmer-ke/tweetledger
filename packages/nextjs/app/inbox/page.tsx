@@ -14,6 +14,7 @@ const Inbox: NextPage = () => {
           <a
             href="https://xmtp.org/"
             target="_blank"
+            rel="noopener noreferrer"
             className="text-blue-500 hover:text-blue-700 underline hover:no-underline transition"
           >
             XMTP

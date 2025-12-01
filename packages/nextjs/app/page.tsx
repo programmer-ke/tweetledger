@@ -45,7 +45,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="flex items-center flex-col grow pt-6 sm:pt-8 md:pt-10 px-4 sm:px-5 md:px-6">
+      <div className="flex items-center flex-col flex-grow pt-6 sm:pt-8 md:pt-10 px-4 sm:px-5 md:px-6">
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mb-4 sm:mb-6 md:mb-8">
           {!connectedAddress ? (
             <p className="text-center text-sm sm:text-base mb-4">Connect your wallet to post</p>

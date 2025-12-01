@@ -197,7 +197,11 @@ export const SocialFeed = () => {
                     </p>
                     <p className="text-xs sm:text-sm text-gray-400 break-all">
                       #{post.id} |{" "}
-                      <a target="_blank" href={`https://${ipfsGateway}/ipfs/${post.cid}`}>
+                      <a
+                        target="_blank"
+                        href={`https://${ipfsGateway}/ipfs/${post.cid}`}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
                         IPFS
                       </a>
                     </p>

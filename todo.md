@@ -93,7 +93,7 @@ slice. Status uses markdown checkboxes:
   Instead of reloading the whole feed when contract updates, allow
   user to instead load more historical or new updates
   
-- [ ] **UI enhancements**
+- [>] **UI enhancements**
   - Show newlines in posts
   - Show link to ipfs for each post
   - Show DM (coming soon) option in main menu

@@ -190,12 +190,21 @@ export const SocialFeed = () => {
                         {new Date(Number(post.timestamp) * 1000).toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-base sm:text-lg break-words">
+                    <p className="text-base sm:text-lg break-words whitespace-pre-wrap">
                       {messageCache[post.cid] !== undefined
                         ? messageCache[post.cid] || "[Message unavailable]"
                         : "Loading..."}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-400 break-all">#{post.id}</p>
+                    <p className="text-xs sm:text-sm text-gray-400 break-all">
+                      #{post.id} |{" "}
+                      <a
+                        target="_blank"
+                        href={`https://${ipfsGateway}/ipfs/${post.cid}`}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        IPFS
+                      </a>
+                    </p>
                   </div>
                 </div>
               ))

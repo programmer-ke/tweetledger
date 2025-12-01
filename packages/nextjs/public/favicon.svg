@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="103" height="102"><svg width="103" height="102" viewBox="0 0 103 102" xmlns="http://www.w3.org/2000/svg">
+  <rect width="103" height="102" fill="#000"></rect>
+  <g transform="translate(51.5,51)">
+    <path d="M0,-30 L26,-15 L26,15 L0,30 L-26,15 L-26,-15 Z" fill="none" stroke="#1D9BF0" stroke-width="6"></path>
+    <path d="M0,-15 L13,-7.5 L13,7.5 L0,15 L-13,7.5 L-13,-7.5 Z" fill="#1D9BF0"></path>
+    <text x="0" y="6" fill="#000" font-family="Arial, sans-serif" font-weight="bold" font-size="28" text-anchor="middle">T</text>
+  </g>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+@media (prefers-color-scheme: dark) { :root { filter: none; } }
+</style></svg>

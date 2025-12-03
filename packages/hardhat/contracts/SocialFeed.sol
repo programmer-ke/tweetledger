@@ -15,6 +15,8 @@ contract SocialFeed is Ownable {
 
     mapping(address => bool) public admins;
 
+    uint256 public usdPricePerEth;
+
     struct Post {
         uint256 id;
         address author;
@@ -28,12 +30,21 @@ contract SocialFeed is Ownable {
 
     event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
 
+    modifier onlyAdmin() {
+        require(admins[msg.sender], "Only admin");
+        _;
+    }
+
     function addAdmin(address _admin) external onlyOwner {
         admins[_admin] = true;
     }
 
     function removeAdmin(address _admin) external onlyOwner {
         admins[_admin] = false;
+    }
+
+    function setUsdPricePerEth(uint256 _price) external onlyAdmin {
+        usdPricePerEth = _price;
     }
 
     function post(string memory message, string memory _cid) external {

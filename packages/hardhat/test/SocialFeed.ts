@@ -201,4 +201,25 @@ describe("SocialFeed", function () {
         .withArgs(await otherUser.getAddress());
     });
   });
+
+  describe("USD Price Management", () => {
+    let otherUser: Signer;
+
+    before(async () => {
+      [, otherUser] = await ethers.getSigners();
+    });
+
+    it("Should initialize usdPricePerEth to 0", async () => {
+      expect(await socialFeed.usdPricePerEth()).to.equal(0);
+    });
+
+    it("Should allow admin to set usdPricePerEth", async () => {
+      await socialFeed.connect(user).setUsdPricePerEth(3000);
+      expect(await socialFeed.usdPricePerEth()).to.equal(3000);
+    });
+
+    it("Should not allow non-admin to set usdPricePerEth", async () => {
+      await expect(socialFeed.connect(otherUser).setUsdPricePerEth(3000)).to.be.revertedWith("Only admin");
+    });
+  });
 });

@@ -199,7 +199,7 @@ export const SocialFeed = () => {
                       #{post.id} |{" "}
                       <a
                         target="_blank"
-                        href={`https://${ipfsGateway}/ipfs/${post.cid}`}
+                        href={`https://ipfs.io/ipfs/${post.cid}`}
                         className="text-blue-500 hover:text-blue-700"
                       >
                         IPFS

@@ -167,4 +167,38 @@ describe("SocialFeed", function () {
       expect(posts.length).to.equal(0);
     });
   });
+
+  describe("Admin Management", () => {
+    let otherUser: Signer;
+
+    before(async () => {
+      [, otherUser] = await ethers.getSigners();
+    });
+
+    it("Should allow owner to add an admin", async () => {
+      await socialFeed.connect(user).addAdmin(await otherUser.getAddress());
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      expect(await socialFeed.admins(await otherUser.getAddress())).to.be.true;
+    });
+
+    it("Should allow owner to remove an admin", async () => {
+      await socialFeed.connect(user).addAdmin(await otherUser.getAddress());
+      await socialFeed.connect(user).removeAdmin(await otherUser.getAddress());
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      expect(await socialFeed.admins(await otherUser.getAddress())).to.be.false;
+    });
+
+    it("Should not allow non-owner to add an admin", async () => {
+      await expect(socialFeed.connect(otherUser).addAdmin(await user.getAddress()))
+        .to.be.revertedWithCustomError(socialFeed, "OwnableUnauthorizedAccount")
+        .withArgs(await otherUser.getAddress());
+    });
+
+    it("Should not allow non-owner to remove an admin", async () => {
+      await socialFeed.connect(user).addAdmin(await otherUser.getAddress());
+      await expect(socialFeed.connect(otherUser).removeAdmin(await otherUser.getAddress()))
+        .to.be.revertedWithCustomError(socialFeed, "OwnableUnauthorizedAccount")
+        .withArgs(await otherUser.getAddress());
+    });
+  });
 });

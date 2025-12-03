@@ -14,7 +14,7 @@ describe("SocialFeed", function () {
   // We define a fixture to reuse the same setup in every test.
   beforeEach(async () => {
     const socialFeedFactory = await ethers.getContractFactory("SocialFeed");
-    socialFeed = (await socialFeedFactory.deploy()) as SocialFeed;
+    socialFeed = (await socialFeedFactory.deploy(await user.getAddress())) as SocialFeed;
     await socialFeed.waitForDeployment();
   });
 

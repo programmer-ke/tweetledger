@@ -11,6 +11,8 @@ contract SocialFeed is Ownable {
     uint256 public tail = 0; // ID of the latest post (newest)
     uint256 public nextId = 1; // Counter for post IDs
 
+    mapping(address => bool) public admins;
+
     struct Post {
         uint256 id;
         address author;
@@ -23,6 +25,14 @@ contract SocialFeed is Ownable {
     mapping(uint256 => Post) public posts;
 
     event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
+
+    function addAdmin(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    function removeAdmin(address _admin) external onlyOwner {
+        admins[_admin] = false;
+    }
 
     function post(string memory message, string memory _cid) external {
         require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");

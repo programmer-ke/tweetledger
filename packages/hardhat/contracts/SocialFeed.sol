@@ -15,7 +15,7 @@ contract SocialFeed is Ownable {
 
     mapping(address => bool) public admins;
 
-    uint256 public usdPricePerEth;
+    uint256 public usdPricePerEth = 2500;  // admins can update this
 
     struct Post {
         uint256 id;

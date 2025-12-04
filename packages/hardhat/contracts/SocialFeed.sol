@@ -85,6 +85,44 @@ contract SocialFeed is Ownable {
         userRewardPercentage = _percentage;
     }
 
+    function distributeRewards(address[] memory winners, uint256[] memory postCounts) external onlyAdmin {
+        // Checks
+        require(winners.length == postCounts.length, "Winners and postCounts length mismatch");
+        require(winners.length > 0, "No winners to distribute");
+
+        uint256 totalBalance = address(this).balance;
+        uint256 rewardPortion = (totalBalance * userRewardPercentage) / 100;
+        uint256 perWinner = rewardPortion / winners.length;
+
+        // Effects: Update state first
+        uint256[] memory amounts = new uint256[](winners.length);
+        for (uint256 i = 0; i < winners.length; i++) {
+            amounts[i] = perWinner;
+        }
+
+        awardHistory.push(AwardRecord({
+            timestamp: block.timestamp,
+            periodId: rewardPeriodId,
+            addresses: winners,
+            amounts: amounts,
+            postCounts: postCounts
+        }));
+
+        rewardPeriodId++;
+
+        // Interactions: External calls last
+        for (uint256 i = 0; i < winners.length; i++) {
+            (bool success,) = payable(winners[i]).call{value: perWinner}("");
+            require(success, "Reward transfer failed");
+        }
+
+        uint256 remaining = totalBalance - rewardPortion;
+        if (remaining > 0) {
+            (bool success,) = payable(owner()).call{value: remaining}("");
+            require(success, "Owner transfer failed");
+        }
+    }
+
     function post(string memory message, string memory _cid) external payable {
         require(bytes(message).length > 0 && bytes(message).length <= 280, "Message must be 1-280 characters");
         require(bytes(_cid).length > 0 && bytes(_cid).length <= 100, "CID must be 1-100 chars");

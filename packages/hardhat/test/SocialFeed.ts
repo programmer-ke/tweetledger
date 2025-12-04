@@ -390,7 +390,7 @@ describe("SocialFeed", function () {
 
       const winners = [await winner1.getAddress(), await winner2.getAddress()];
       const postCounts = [5, 3];
-      const initialHistoryLength = (await socialFeed.awardHistory()).length;
+      const initialHistoryLength = await socialFeed.getAwardHistoryLength();
       const initialPeriod = await socialFeed.rewardPeriodId();
 
       await socialFeed.connect(user).distributeRewards(winners, postCounts);
@@ -405,9 +405,9 @@ describe("SocialFeed", function () {
       expect(ownerBalance).to.be.gt(ethers.parseEther("9999.49")); // Owner had initial balance
 
       // Check history
-      const history = await socialFeed.awardHistory();
-      expect(history.length).to.equal(initialHistoryLength + 1);
-      const record = history[history.length - 1];
+      const historyLength = await socialFeed.getAwardHistoryLength();
+      expect(historyLength).to.equal(initialHistoryLength + 1);
+      const record = await socialFeed.awardHistory(historyLength - 1);
       expect(record.periodId).to.equal(initialPeriod);
       expect(record.addresses).to.deep.equal(winners);
       expect(record.amounts.length).to.equal(2);

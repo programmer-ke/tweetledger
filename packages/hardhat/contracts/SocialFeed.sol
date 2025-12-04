@@ -210,5 +210,9 @@ contract SocialFeed is Ownable {
         return result;
     }
 
+    function getAwardHistoryLength() public view returns (uint256) {
+        return awardHistory.length;
+    }
+
     receive() external payable {}
 }

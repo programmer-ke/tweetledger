@@ -12,11 +12,14 @@ export default function RewardsPage() {
 
   if (isLoading) return <div>Loading...</div>;
 
+  // Create a reversed copy to show latest first
+  const reversedRecords = awardRecords ? [...awardRecords].reverse() : [];
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Award History</h1>
-      {awardRecords && awardRecords.length > 0 ? (
-        awardRecords.map((record, idx) => (
+      {reversedRecords.length > 0 ? (
+        reversedRecords.map((record, idx) => (
           <div key={idx} className="mb-8">
             <h2 className="text-xl font-semibold mb-2">Round {record.periodId.toString()}</h2>
             <table className="table table-zebra w-full">

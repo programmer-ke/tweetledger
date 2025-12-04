@@ -43,6 +43,16 @@ contract SocialFeed is Ownable {
     mapping(uint256 => mapping(address => UserPeriodData)) public userPostCount;
     mapping(uint256 => address[]) public periodUsers;
 
+    struct AwardRecord {
+        uint256 timestamp;
+        uint256 periodId;
+        address[] addresses;
+        uint256[] amounts; // Awarded amount per address
+        uint256[] postCounts; // Number of posts per address
+    }
+
+    AwardRecord[] public awardHistory;
+
     event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
 
     modifier onlyAdmin() {
@@ -149,5 +159,16 @@ contract SocialFeed is Ownable {
     function getPostCostInWei() public view returns (uint256) {
         require(usdPricePerEth > 0, "USD price per ETH must be > 0");
         return (usdCentsPerPost * 1e18) / (100 * usdPricePerEth);
+    }
+
+    function getLastAwardRecords(uint256 count) external view returns (AwardRecord[] memory) {
+        uint256 historyLength = awardHistory.length;
+        uint256 start = count > historyLength ? 0 : historyLength - count;
+        uint256 resultLength = historyLength - start;
+        AwardRecord[] memory result = new AwardRecord[](resultLength);
+        for (uint256 i = 0; i < resultLength; i++) {
+            result[i] = awardHistory[start + i];
+        }
+        return result;
     }
 }

@@ -325,4 +325,27 @@ describe("SocialFeed", function () {
       );
     });
   });
+
+  describe("Post Cost Calculation", () => {
+    it("Should calculate post cost in wei with default values", async () => {
+      // Default: usdCentsPerPost = 10, usdPricePerEth = 2500
+      // Cost = (10 * 1e18) / (100 * 2500) = 1e19 / 250000 = 4e13 wei
+      expect(await socialFeed.getPostCostInWei()).to.equal(40000000000000n); // 4e13
+    });
+
+    it("Should update cost when usdCentsPerPost changes", async () => {
+      await socialFeed.connect(user).setUsdCentsPerPost(20); // Double cents
+      expect(await socialFeed.getPostCostInWei()).to.equal(80000000000000n); // Double cost
+    });
+
+    it("Should update cost when usdPricePerEth changes", async () => {
+      await socialFeed.connect(user).setUsdPricePerEth(5000); // Double price
+      expect(await socialFeed.getPostCostInWei()).to.equal(20000000000000n); // Half cost
+    });
+
+    it("Should revert if usdPricePerEth is 0", async () => {
+      await socialFeed.connect(user).setUsdPricePerEth(0);
+      await expect(socialFeed.getPostCostInWei()).to.be.revertedWith("USD price per ETH must be > 0");
+    });
+  });
 });

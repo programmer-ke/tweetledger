@@ -144,4 +144,9 @@ contract SocialFeed is Ownable {
             data[i] = userPostCount[periodId][users[i]];
         }
     }
+
+    function getPostCostInWei() public view returns (uint256) {
+        require(usdPricePerEth > 0, "USD price per ETH must be > 0");
+        return (usdCentsPerPost * 1e18) / (100 * usdPricePerEth);
+    }
 }

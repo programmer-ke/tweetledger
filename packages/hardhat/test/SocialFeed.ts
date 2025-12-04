@@ -79,6 +79,33 @@ describe("SocialFeed", function () {
     });
   });
 
+  describe("User Post Count for Rewards", () => {
+    it("Should increment user post count for the current reward period on posting", async () => {
+      const userAddress = await user.getAddress();
+      const initialCount = await socialFeed.userPostCount(1, userAddress); // rewardPeriodId starts at 1
+      expect(initialCount).to.equal(0);
+
+      await socialFeed.connect(user).post("First post", "QmCID1");
+      const countAfterFirst = await socialFeed.userPostCount(1, userAddress);
+      expect(countAfterFirst).to.equal(1);
+
+      await socialFeed.connect(user).post("Second post", "QmCID2");
+      const countAfterSecond = await socialFeed.userPostCount(1, userAddress);
+      expect(countAfterSecond).to.equal(2);
+    });
+
+    it("Should not increment count for other users or periods", async () => {
+      const [, otherUser] = await ethers.getSigners();
+      const userAddress = await user.getAddress();
+      const otherAddress = await otherUser.getAddress();
+
+      await socialFeed.connect(user).post("Post by user", "QmCID1");
+      expect(await socialFeed.userPostCount(1, userAddress)).to.equal(1);
+      expect(await socialFeed.userPostCount(1, otherAddress)).to.equal(0); // Other user unaffected
+      expect(await socialFeed.userPostCount(2, userAddress)).to.equal(0); // Different period unaffected
+    });
+  });
+
   describe("Hashing", () => {
     it("Should compute correct message hash via pure function", async () => {
       const message = "Test message";

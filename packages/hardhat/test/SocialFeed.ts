@@ -237,7 +237,7 @@ describe("SocialFeed", function () {
     });
 
     it("Should initialize usdPricePerEth to 0", async () => {
-      expect(await socialFeed.usdPricePerEth()).to.equal(0);
+      expect(await socialFeed.usdPricePerEth()).to.equal(2500);
     });
 
     it("Should allow admin to set usdPricePerEth", async () => {

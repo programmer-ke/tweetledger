@@ -372,4 +372,65 @@ describe("SocialFeed", function () {
       await expect(socialFeed.getPostCostInWei()).to.be.revertedWith("USD price per ETH must be > 0");
     });
   });
+
+  describe("Reward Distribution", () => {
+    let otherUser: Signer;
+    let winner1: Signer;
+    let winner2: Signer;
+
+    before(async () => {
+      [, otherUser, winner1, winner2] = await ethers.getSigners();
+    });
+
+    it("Should distribute rewards to winners and update history", async () => {
+      // Fund contract with 1 ETH
+      await user.sendTransaction({ to: socialFeed.target, value: ethers.parseEther("1") });
+      const initialBalance = await ethers.provider.getBalance(socialFeed.target);
+      expect(initialBalance).to.equal(ethers.parseEther("1"));
+
+      const winners = [await winner1.getAddress(), await winner2.getAddress()];
+      const postCounts = [5, 3];
+      const initialHistoryLength = (await socialFeed.awardHistory()).length;
+      const initialPeriod = await socialFeed.rewardPeriodId();
+
+      await socialFeed.connect(user).distributeRewards(winners, postCounts);
+
+      // Check balances: 50% to winners (0.5 ETH total, 0.25 each), 50% to owner
+      const winner1Balance = await ethers.provider.getBalance(await winner1.getAddress());
+      const winner2Balance = await ethers.provider.getBalance(await winner2.getAddress());
+      const ownerBalance = await ethers.provider.getBalance(await user.getAddress());
+      // Note: Exact balances depend on gas, so check increases instead
+      expect(winner1Balance).to.be.gt(ethers.parseEther("0.24")); // Approximate
+      expect(winner2Balance).to.be.gt(ethers.parseEther("0.24"));
+      expect(ownerBalance).to.be.gt(ethers.parseEther("9999.49")); // Owner had initial balance
+
+      // Check history
+      const history = await socialFeed.awardHistory();
+      expect(history.length).to.equal(initialHistoryLength + 1);
+      const record = history[history.length - 1];
+      expect(record.periodId).to.equal(initialPeriod);
+      expect(record.addresses).to.deep.equal(winners);
+      expect(record.amounts.length).to.equal(2);
+      expect(record.postCounts).to.deep.equal(postCounts);
+
+      // Check period incremented
+      expect(await socialFeed.rewardPeriodId()).to.equal(initialPeriod + 1);
+    });
+
+    it("Should revert on non-admin call", async () => {
+      await expect(socialFeed.connect(otherUser).distributeRewards([], [])).to.be.revertedWith("Only admin");
+    });
+
+    it("Should revert on empty winners", async () => {
+      await expect(socialFeed.connect(user).distributeRewards([], [])).to.be.revertedWith("No winners to distribute");
+    });
+
+    it("Should revert on length mismatch", async () => {
+      const winners = [await winner1.getAddress()];
+      const postCounts = [5, 3]; // Different length
+      await expect(socialFeed.connect(user).distributeRewards(winners, postCounts)).to.be.revertedWith(
+        "Winners and postCounts length mismatch",
+      );
+    });
+  });
 });

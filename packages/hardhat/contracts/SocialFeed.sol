@@ -15,7 +15,9 @@ contract SocialFeed is Ownable {
 
     mapping(address => bool) public admins;
 
-    uint256 public usdPricePerEth = 2500;  // admins can update this
+    // admins can update the following
+    uint256 public usdPricePerEth = 2500;
+    uint256 public winnersPerRound = 3;
 
     struct Post {
         uint256 id;
@@ -49,6 +51,10 @@ contract SocialFeed is Ownable {
 
     function setUsdPricePerEth(uint256 _price) external onlyAdmin {
         usdPricePerEth = _price;
+    }
+
+    function setWinnersPerRound(uint256 _numWinners) external onlyAdmin {
+        winnersPerRound = _numWinners;
     }
 
     function post(string memory message, string memory _cid) external {

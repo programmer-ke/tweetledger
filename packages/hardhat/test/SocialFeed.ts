@@ -236,7 +236,7 @@ describe("SocialFeed", function () {
       [, otherUser] = await ethers.getSigners();
     });
 
-    it("Should initialize usdPricePerEth to 0", async () => {
+    it("Should initialize usdPricePerEth to 2500", async () => {
       expect(await socialFeed.usdPricePerEth()).to.equal(2500);
     });
 
@@ -247,6 +247,27 @@ describe("SocialFeed", function () {
 
     it("Should not allow non-admin to set usdPricePerEth", async () => {
       await expect(socialFeed.connect(otherUser).setUsdPricePerEth(3000)).to.be.revertedWith("Only admin");
+    });
+  });
+
+  describe("Winner Count Management", () => {
+    let otherUser: Signer;
+
+    before(async () => {
+      [, otherUser] = await ethers.getSigners();
+    });
+
+    it("Should initialize winnersPerRound to 3", async () => {
+      expect(await socialFeed.winnersPerRound()).to.equal(3);
+    });
+
+    it("Should allow admin to set winnersPerRound", async () => {
+      await socialFeed.connect(user).setWinnersPerRound(5);
+      expect(await socialFeed.winnersPerRound()).to.equal(5);
+    });
+
+    it("Should not allow non-admin to set winnersPerRound", async () => {
+      await expect(socialFeed.connect(otherUser).setWinnersPerRound(8)).to.be.revertedWith("Only admin");
     });
   });
 });

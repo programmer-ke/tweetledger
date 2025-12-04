@@ -131,6 +131,23 @@ export default function AdminPage() {
     }
   };
 
+  const handleDistributeRewards = async () => {
+    if (!topWinners.length) return;
+    const addresses = topWinners.map(w => w.user);
+    const postCounts = topWinners.map(w => BigInt(w.count));
+    try {
+      await writeContractAsync({
+        functionName: "distributeRewards",
+        args: [addresses, postCounts],
+      });
+      notification.success("Rewards distributed successfully");
+      setShowWinners(false); // Optional: Reset to reload winners for new period
+    } catch (error) {
+      console.log("error distributing rewards", error);
+      notification.error("Failed to distribute rewards");
+    }
+  };
+
   if (!isAdmin) return <div>Access denied: Only admins can access this page.</div>;
 
   return (
@@ -218,6 +235,13 @@ export default function AdminPage() {
               </ul>
             ) : (
               <p>No winners yet.</p>
+            )}
+            {topWinners.length > 0 && (
+              <div className="mt-4">
+                <button onClick={handleDistributeRewards} className="btn btn-success">
+                  Distribute Rewards
+                </button>
+              </div>
             )}
           </>
         )}

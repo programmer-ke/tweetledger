@@ -209,4 +209,6 @@ contract SocialFeed is Ownable {
         }
         return result;
     }
+
+    receive() external payable {}
 }

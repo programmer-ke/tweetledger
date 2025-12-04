@@ -28,6 +28,10 @@ contract SocialFeed is Ownable {
 
     mapping(uint256 => Post) public posts;
 
+    // user rewards tracking
+    uint256 public rewardPeriodId = 1;
+    mapping(uint256 => mapping(address => uint256)) public userPostCount;
+
     event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
 
     modifier onlyAdmin() {
@@ -66,6 +70,9 @@ contract SocialFeed is Ownable {
             head = id; // First post
         }
         tail = id;
+
+	// increment posting count for this reward period
+	userPostCount[rewardPeriodId][msg.sender]++;
 
         emit PostCreated(id, _cid, msg.sender, tail - 1, block.timestamp, messageHash);
     }

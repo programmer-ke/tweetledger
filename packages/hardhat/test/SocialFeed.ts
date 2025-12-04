@@ -80,29 +80,44 @@ describe("SocialFeed", function () {
   });
 
   describe("User Post Count for Rewards", () => {
-    it("Should increment user post count for the current reward period on posting", async () => {
+    it("Should increment user post count and set latest timestamp for the current reward period on posting", async () => {
       const userAddress = await user.getAddress();
-      const initialCount = await socialFeed.userPostCount(1, userAddress); // rewardPeriodId starts at 1
-      expect(initialCount).to.equal(0);
+      const initialData = await socialFeed.userPostCount(1, userAddress);
+      expect(initialData.count).to.equal(0);
+      expect(initialData.latestTimestamp).to.equal(0);
 
-      await socialFeed.connect(user).post("First post", "QmCID1");
-      const countAfterFirst = await socialFeed.userPostCount(1, userAddress);
-      expect(countAfterFirst).to.equal(1);
+      const tx1 = await socialFeed.connect(user).post("First post", "QmCID1");
+      const receipt1 = await tx1.wait();
+      const timestamp1 = (await ethers.provider.getBlock(receipt1!.blockNumber!))!.timestamp;
+      const dataAfterFirst = await socialFeed.userPostCount(1, userAddress);
+      expect(dataAfterFirst.count).to.equal(1);
+      expect(dataAfterFirst.latestTimestamp).to.equal(timestamp1);
 
-      await socialFeed.connect(user).post("Second post", "QmCID2");
-      const countAfterSecond = await socialFeed.userPostCount(1, userAddress);
-      expect(countAfterSecond).to.equal(2);
+      const tx2 = await socialFeed.connect(user).post("Second post", "QmCID2");
+      const receipt2 = await tx2.wait();
+      const timestamp2 = (await ethers.provider.getBlock(receipt2!.blockNumber!))!.timestamp;
+      const dataAfterSecond = await socialFeed.userPostCount(1, userAddress);
+      expect(dataAfterSecond.count).to.equal(2);
+      expect(dataAfterSecond.latestTimestamp).to.equal(timestamp2); // Updated to latest
     });
 
-    it("Should not increment count for other users or periods", async () => {
+    it("Should not increment count or set timestamp for other users or periods", async () => {
       const [, otherUser] = await ethers.getSigners();
       const userAddress = await user.getAddress();
       const otherAddress = await otherUser.getAddress();
 
       await socialFeed.connect(user).post("Post by user", "QmCID1");
-      expect(await socialFeed.userPostCount(1, userAddress)).to.equal(1);
-      expect(await socialFeed.userPostCount(1, otherAddress)).to.equal(0); // Other user unaffected
-      expect(await socialFeed.userPostCount(2, userAddress)).to.equal(0); // Different period unaffected
+      const userData = await socialFeed.userPostCount(1, userAddress);
+      expect(userData.count).to.equal(1);
+      expect(userData.latestTimestamp).to.be.gt(0);
+
+      const otherData = await socialFeed.userPostCount(1, otherAddress);
+      expect(otherData.count).to.equal(0);
+      expect(otherData.latestTimestamp).to.equal(0);
+
+      const differentPeriodData = await socialFeed.userPostCount(2, userAddress);
+      expect(differentPeriodData.count).to.equal(0);
+      expect(differentPeriodData.latestTimestamp).to.equal(0);
     });
   });
 

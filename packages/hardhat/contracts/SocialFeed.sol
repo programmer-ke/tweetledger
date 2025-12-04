@@ -32,7 +32,14 @@ contract SocialFeed is Ownable {
 
     // user rewards tracking
     uint256 public rewardPeriodId = 1;
-    mapping(uint256 => mapping(address => uint256)) public userPostCount;
+
+    struct UserPeriodData {
+        uint256 count;
+        uint256 latestTimestamp;
+    }
+
+    mapping(uint256 => mapping(address => UserPeriodData)) public userPostCount;
+    mapping(uint256 => address[]) public periodUsers;
 
     event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
 
@@ -78,7 +85,12 @@ contract SocialFeed is Ownable {
         tail = id;
 
 	// increment posting count for this reward period
-	userPostCount[rewardPeriodId][msg.sender]++;
+	userPostCount[rewardPeriodId][msg.sender].count++;
+	userPostCount[rewardPeriodId][msg.sender].latestTimestamp = block.timestamp;
+
+        if (userPostCount[rewardPeriodId][msg.sender].count == 1) {
+            periodUsers[rewardPeriodId].push(msg.sender);
+        }
 
         emit PostCreated(id, _cid, msg.sender, tail - 1, block.timestamp, messageHash);
     }
@@ -112,5 +124,13 @@ contract SocialFeed is Ownable {
         }
 
         return result;
+    }
+
+    function getPeriodData(uint256 periodId) external view returns (address[] memory users, UserPeriodData[] memory data) {
+        users = periodUsers[periodId];
+        data = new UserPeriodData[](users.length);
+        for (uint256 i = 0; i < users.length; i++) {
+            data[i] = userPostCount[periodId][users[i]];
+        }
     }
 }

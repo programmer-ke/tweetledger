@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SocialFeed: {
-      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       abi: [
         {
           inputs: [
@@ -169,6 +169,42 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
+              name: "periodId",
+              type: "uint256",
+            },
+          ],
+          name: "getPeriodData",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "users",
+              type: "address[]",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "count",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "latestTimestamp",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct SocialFeed.UserPeriodData[]",
+              name: "data",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
               name: "startId",
               type: "uint256",
             },
@@ -250,6 +286,30 @@ const deployedContracts = {
         {
           inputs: [],
           name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "periodUsers",
           outputs: [
             {
               internalType: "address",
@@ -437,7 +497,12 @@ const deployedContracts = {
           outputs: [
             {
               internalType: "uint256",
-              name: "",
+              name: "count",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "latestTimestamp",
               type: "uint256",
             },
           ],
@@ -463,7 +528,7 @@ const deployedContracts = {
         renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
-      deployedOnBlock: 11,
+      deployedOnBlock: 5,
     },
   },
 } as const;

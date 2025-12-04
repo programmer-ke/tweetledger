@@ -390,7 +390,6 @@ describe("SocialFeed", function () {
 
       const winners = [await winner1.getAddress(), await winner2.getAddress()];
       const postCounts = [5, 3];
-      const initialHistoryLength = await socialFeed.getAwardHistoryLength();
       const initialPeriod = await socialFeed.rewardPeriodId();
 
       await socialFeed.connect(user).distributeRewards(winners, postCounts);
@@ -405,9 +404,9 @@ describe("SocialFeed", function () {
       expect(ownerBalance).to.be.gt(ethers.parseEther("9999.4")); // Lower threshold for gas
 
       // Check history
-      const historyLength = await socialFeed.getAwardHistoryLength();
-      expect(historyLength).to.equal(initialHistoryLength + 1n);
-      const record = await socialFeed.awardHistory(historyLength - 1n);
+      const records = await socialFeed.getLastAwardRecords(1);
+      expect(records.length).to.equal(1);
+      const record = records[0];
       expect(record.periodId).to.equal(initialPeriod);
       expect(record.addresses).to.deep.equal(winners);
       expect(record.amounts.length).to.equal(2);

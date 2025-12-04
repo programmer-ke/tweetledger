@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
@@ -9,6 +9,7 @@ export default function AdminPage() {
   const { address } = useAccount();
   const [newPrice, setNewPrice] = useState("");
   const [newWinnerCount, setNewWinnerCount] = useState("");
+  const [showWinners, setShowWinners] = useState(false);
 
   const { data: isAdmin } = useScaffoldReadContract({
     contractName: "SocialFeed",
@@ -26,7 +27,37 @@ export default function AdminPage() {
     functionName: "winnersPerRound",
   });
 
+  const { data: currentPeriodId } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "rewardPeriodId",
+  });
+
+  const { data: periodData, isLoading: isPeriodLoading } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "getPeriodData",
+    args: [currentPeriodId],
+    query: {
+      enabled: showWinners, // Only fetch when showWinners is true
+    },
+  });
+
   const { writeContractAsync } = useScaffoldWriteContract("SocialFeed");
+
+  const topWinners = useMemo(() => {
+    if (!periodData || !currentWinnerCount) return [];
+    const [users, data] = periodData;
+    const combined = users.map((user, i) => ({
+      user,
+      count: data[i].count,
+      timestamp: data[i].latestTimestamp,
+    }));
+    combined.sort((a, b) => {
+      const countDiff = Number(b.count) - Number(a.count);
+      if (countDiff !== 0) return countDiff;
+      return Number(a.timestamp) - Number(b.timestamp);
+    });
+    return combined.slice(0, Number(currentWinnerCount));
+  }, [periodData, currentWinnerCount]);
 
   const handleUpdatePrice = async () => {
     if (!newPrice || isNaN(Number(newPrice))) return;
@@ -92,6 +123,30 @@ export default function AdminPage() {
         <button onClick={handleUpdateWinners} className="btn btn-primary" disabled={!newWinnerCount}>
           Update Winners
         </button>
+      </div>
+      <div className="mt-8">
+        <button onClick={() => setShowWinners(true)} className="btn btn-secondary" disabled={showWinners}>
+          Load Top Winners
+        </button>
+        {showWinners && (
+          <>
+            <h2 className="text-xl font-bold mb-4 mt-4">Top Winners for Period {currentPeriodId}</h2>
+            {isPeriodLoading ? (
+              <p>Loading...</p>
+            ) : topWinners.length > 0 ? (
+              <ul className="list-disc pl-5">
+                {topWinners.map((winner, idx) => (
+                  <li key={winner.user}>
+                    {idx + 1}. {winner.user} - Posts: {winner.count}, Latest:{" "}
+                    {new Date(Number(winner.timestamp) * 1000).toLocaleString()}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No winners yet.</p>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

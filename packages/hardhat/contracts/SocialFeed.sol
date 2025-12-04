@@ -18,6 +18,8 @@ contract SocialFeed is Ownable {
     // admins can update the following
     uint256 public usdPricePerEth = 2500;
     uint256 public winnersPerRound = 3;
+    uint256 public usdCentsPerPost = 10; // Cost in USD cents per post
+    uint256 public userRewardPercentage = 50; // Reward percentage for users (0-100)
 
     struct Post {
         uint256 id;
@@ -62,6 +64,15 @@ contract SocialFeed is Ownable {
 
     function setWinnersPerRound(uint256 _numWinners) external onlyAdmin {
         winnersPerRound = _numWinners;
+    }
+
+    function setUsdCentsPerPost(uint256 _cents) external onlyAdmin {
+        usdCentsPerPost = _cents;
+    }
+
+    function setUserRewardPercentage(uint256 _percentage) external onlyAdmin {
+        require(_percentage <= 100, "Percentage must be <= 100");
+        userRewardPercentage = _percentage;
     }
 
     function post(string memory message, string memory _cid) external {

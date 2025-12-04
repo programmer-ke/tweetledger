@@ -9,6 +9,8 @@ export default function AdminPage() {
   const { address } = useAccount();
   const [newPrice, setNewPrice] = useState("");
   const [newWinnerCount, setNewWinnerCount] = useState("");
+  const [newCentsPerPost, setNewCentsPerPost] = useState("");
+  const [newRewardPercentage, setNewRewardPercentage] = useState("");
   const [showWinners, setShowWinners] = useState(false);
 
   const { data: isAdmin } = useScaffoldReadContract({
@@ -25,6 +27,16 @@ export default function AdminPage() {
   const { data: currentWinnerCount } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "winnersPerRound",
+  });
+
+  const { data: currentCentsPerPost } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "usdCentsPerPost",
+  });
+
+  const { data: currentRewardPercentage } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "userRewardPercentage",
   });
 
   const { data: currentPeriodId } = useScaffoldReadContract({
@@ -89,6 +101,36 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateCents = async () => {
+    if (!newCentsPerPost || isNaN(Number(newCentsPerPost))) return;
+    try {
+      await writeContractAsync({
+        functionName: "setUsdCentsPerPost",
+        args: [BigInt(newCentsPerPost)],
+      });
+      notification.success("Cents per post updated successfully");
+      setNewCentsPerPost("");
+    } catch (error) {
+      console.log("error updating cents", error);
+      notification.error("Failed to update cents per post");
+    }
+  };
+
+  const handleUpdatePercentage = async () => {
+    if (!newRewardPercentage || isNaN(Number(newRewardPercentage)) || Number(newRewardPercentage) > 100) return;
+    try {
+      await writeContractAsync({
+        functionName: "setUserRewardPercentage",
+        args: [BigInt(newRewardPercentage)],
+      });
+      notification.success("Reward percentage updated successfully");
+      setNewRewardPercentage("");
+    } catch (error) {
+      console.log("error updating percentage", error);
+      notification.error("Failed to update reward percentage");
+    }
+  };
+
   if (!isAdmin) return <div>Access denied: Only admins can access this page.</div>;
 
   return (
@@ -122,6 +164,38 @@ export default function AdminPage() {
         />
         <button onClick={handleUpdateWinners} className="btn btn-primary" disabled={!newWinnerCount}>
           Update Winners
+        </button>
+      </div>
+      <div className="mb-4">
+        <p>Current USD Cents per Post: {currentCentsPerPost ? currentCentsPerPost.toString() : "Loading..."}</p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newCentsPerPost}
+          onChange={e => setNewCentsPerPost(e.target.value)}
+          placeholder="Enter cents per post"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdateCents} className="btn btn-primary" disabled={!newCentsPerPost}>
+          Update Cents
+        </button>
+      </div>
+      <div className="mb-4">
+        <p>
+          Current User Reward Percentage: {currentRewardPercentage ? currentRewardPercentage.toString() : "Loading..."}%
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newRewardPercentage}
+          onChange={e => setNewRewardPercentage(e.target.value)}
+          placeholder="Enter reward percentage (0-100)"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdatePercentage} className="btn btn-primary" disabled={!newRewardPercentage}>
+          Update Percentage
         </button>
       </div>
       <div className="mt-8">

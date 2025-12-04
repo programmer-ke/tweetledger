@@ -285,4 +285,44 @@ describe("SocialFeed", function () {
       await expect(socialFeed.connect(otherUser).setWinnersPerRound(8)).to.be.revertedWith("Only admin");
     });
   });
+
+  describe("Post Cost and Reward Management", () => {
+    let otherUser: Signer;
+
+    before(async () => {
+      [, otherUser] = await ethers.getSigners();
+    });
+
+    it("Should initialize usdCentsPerPost to 10", async () => {
+      expect(await socialFeed.usdCentsPerPost()).to.equal(10);
+    });
+
+    it("Should allow admin to set usdCentsPerPost", async () => {
+      await socialFeed.connect(user).setUsdCentsPerPost(20);
+      expect(await socialFeed.usdCentsPerPost()).to.equal(20);
+    });
+
+    it("Should not allow non-admin to set usdCentsPerPost", async () => {
+      await expect(socialFeed.connect(otherUser).setUsdCentsPerPost(30)).to.be.revertedWith("Only admin");
+    });
+
+    it("Should initialize userRewardPercentage to 50", async () => {
+      expect(await socialFeed.userRewardPercentage()).to.equal(50);
+    });
+
+    it("Should allow admin to set userRewardPercentage", async () => {
+      await socialFeed.connect(user).setUserRewardPercentage(75);
+      expect(await socialFeed.userRewardPercentage()).to.equal(75);
+    });
+
+    it("Should not allow non-admin to set userRewardPercentage", async () => {
+      await expect(socialFeed.connect(otherUser).setUserRewardPercentage(80)).to.be.revertedWith("Only admin");
+    });
+
+    it("Should reject userRewardPercentage > 100", async () => {
+      await expect(socialFeed.connect(user).setUserRewardPercentage(101)).to.be.revertedWith(
+        "Percentage must be <= 100",
+      );
+    });
+  });
 });

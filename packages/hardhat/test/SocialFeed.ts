@@ -27,9 +27,10 @@ describe("SocialFeed", function () {
 
   describe("Post", () => {
     it("Should create a post successfully", async () => {
+      const cost = await socialFeed.getPostCostInWei();
       const message = "Hello, world!"; // <= 280 chars
       const cid = "QmExampleCID"; // Mock CID
-      await expect(socialFeed.connect(user).post(message, cid))
+      await expect(socialFeed.connect(user).post(message, cid, { value: cost }))
         .to.emit(socialFeed, "PostCreated")
         .withArgs(1, cid, await user.getAddress(), 0, anyValue, anyValue);
 
@@ -42,34 +43,48 @@ describe("SocialFeed", function () {
     });
 
     it("Should validate message length", async function () {
+      const cost = await socialFeed.getPostCostInWei();
       const longMessage = "a".repeat(281); // >280
-      await expect(socialFeed.connect(user).post(longMessage, "QmCID")).to.be.reverted; // Reverts on invalid
+      await expect(socialFeed.connect(user).post(longMessage, "QmCID", { value: cost })).to.be.reverted; // Reverts on invalid
 
       const validMessage = "a".repeat(280);
-      await expect(socialFeed.connect(user).post(validMessage, "QmCID")).to.not.be.reverted;
+      await expect(socialFeed.connect(user).post(validMessage, "QmCID", { value: cost })).to.not.be.reverted;
     });
 
     it("Should validate CID length", async function () {
+      const cost = await socialFeed.getPostCostInWei();
       const validMessage = "Hello, world!";
 
       // CID too short (length 0)
       const emptyCid = "";
-      await expect(socialFeed.connect(user).post(validMessage, emptyCid)).to.be.revertedWith("CID must be 1-100 chars");
+      await expect(socialFeed.connect(user).post(validMessage, emptyCid, { value: cost })).to.be.revertedWith(
+        "CID must be 1-100 chars",
+      );
 
       // CID too long (length 101)
       const longCid = "a".repeat(101);
-      await expect(socialFeed.connect(user).post(validMessage, longCid)).to.be.revertedWith("CID must be 1-100 chars");
+      await expect(socialFeed.connect(user).post(validMessage, longCid, { value: cost })).to.be.revertedWith(
+        "CID must be 1-100 chars",
+      );
 
       // Valid CID (e.g., length 12)
       const validCid = "QmExampleCID";
-      await expect(socialFeed.connect(user).post(validMessage, validCid)).to.not.be.reverted;
+      await expect(socialFeed.connect(user).post(validMessage, validCid, { value: cost })).to.not.be.reverted;
+    });
+
+    it("Should revert on insufficient payment", async () => {
+      const cost = await socialFeed.getPostCostInWei();
+      await expect(socialFeed.connect(user).post("Message", "QmCID", { value: cost - 1n })).to.be.revertedWith(
+        "Insufficient payment for post",
+      );
     });
   });
 
   describe("Posting multiple", () => {
     it("Should update linked list on multiple posts", async () => {
-      await socialFeed.connect(user).post("First", "QmCID1");
-      await socialFeed.connect(user).post("Second", "QmCID2");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("First", "QmCID1", { value: cost });
+      await socialFeed.connect(user).post("Second", "QmCID2", { value: cost });
 
       expect(await socialFeed.tail()).to.equal(2);
       expect(await socialFeed.head()).to.equal(1);
@@ -81,19 +96,20 @@ describe("SocialFeed", function () {
 
   describe("User Post Count for Rewards", () => {
     it("Should increment user post count and set latest timestamp for the current reward period on posting", async () => {
+      const cost = await socialFeed.getPostCostInWei();
       const userAddress = await user.getAddress();
       const initialData = await socialFeed.userPostCount(1, userAddress);
       expect(initialData.count).to.equal(0);
       expect(initialData.latestTimestamp).to.equal(0);
 
-      const tx1 = await socialFeed.connect(user).post("First post", "QmCID1");
+      const tx1 = await socialFeed.connect(user).post("First post", "QmCID1", { value: cost });
       const receipt1 = await tx1.wait();
       const timestamp1 = (await ethers.provider.getBlock(receipt1!.blockNumber!))!.timestamp;
       const dataAfterFirst = await socialFeed.userPostCount(1, userAddress);
       expect(dataAfterFirst.count).to.equal(1);
       expect(dataAfterFirst.latestTimestamp).to.equal(timestamp1);
 
-      const tx2 = await socialFeed.connect(user).post("Second post", "QmCID2");
+      const tx2 = await socialFeed.connect(user).post("Second post", "QmCID2", { value: cost });
       const receipt2 = await tx2.wait();
       const timestamp2 = (await ethers.provider.getBlock(receipt2!.blockNumber!))!.timestamp;
       const dataAfterSecond = await socialFeed.userPostCount(1, userAddress);
@@ -102,11 +118,12 @@ describe("SocialFeed", function () {
     });
 
     it("Should not increment count or set timestamp for other users or periods", async () => {
+      const cost = await socialFeed.getPostCostInWei();
       const [, otherUser] = await ethers.getSigners();
       const userAddress = await user.getAddress();
       const otherAddress = await otherUser.getAddress();
 
-      await socialFeed.connect(user).post("Post by user", "QmCID1");
+      await socialFeed.connect(user).post("Post by user", "QmCID1", { value: cost });
       const userData = await socialFeed.userPostCount(1, userAddress);
       expect(userData.count).to.equal(1);
       expect(userData.latestTimestamp).to.be.gt(0);
@@ -133,9 +150,10 @@ describe("SocialFeed", function () {
     });
 
     it("Should store correct message hash in posts after posting", async () => {
+      const cost = await socialFeed.getPostCostInWei();
       const message = "Test message";
       const cid = "QmCID"; // Mock CID
-      await socialFeed.connect(user).post(message, cid);
+      await socialFeed.connect(user).post(message, cid, { value: cost });
       const post = await socialFeed.posts(1);
       const expectedHash = await socialFeed.computeMessageHash(message, post.author, post.timestamp);
       expect(post.messageHash).to.equal(expectedHash);
@@ -144,9 +162,10 @@ describe("SocialFeed", function () {
 
   describe("Retrieval", () => {
     it("Should retrieve posts from tail with count=2 after 3 posts", async () => {
-      await socialFeed.connect(user).post("Post 1", "QmCID1");
-      await socialFeed.connect(user).post("Post 2", "QmCID2");
-      await socialFeed.connect(user).post("Post 3", "QmCID3");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("Post 1", "QmCID1", { value: cost });
+      await socialFeed.connect(user).post("Post 2", "QmCID2", { value: cost });
+      await socialFeed.connect(user).post("Post 3", "QmCID3", { value: cost });
 
       const tail = await socialFeed.tail(); // Should be 3
       const posts = await socialFeed.getPosts(tail, 2);
@@ -157,9 +176,10 @@ describe("SocialFeed", function () {
     });
 
     it("Should retrieve posts from specific startId with count=1", async () => {
-      await socialFeed.connect(user).post("Post 1", "QmCID1");
-      await socialFeed.connect(user).post("Post 2", "QmCID2");
-      await socialFeed.connect(user).post("Post 3", "QmCID3");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("Post 1", "QmCID1", { value: cost });
+      await socialFeed.connect(user).post("Post 2", "QmCID2", { value: cost });
+      await socialFeed.connect(user).post("Post 3", "QmCID3", { value: cost });
 
       const posts = await socialFeed.getPosts(2, 1);
 
@@ -168,13 +188,15 @@ describe("SocialFeed", function () {
     });
 
     it("Should handle edge case: startId does not exist", async () => {
-      await socialFeed.connect(user).post("Post 1", "QmCID1");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("Post 1", "QmCID1", { value: cost });
 
       await expect(socialFeed.getPosts(999, 1)).to.be.revertedWith("Start ID does not exist");
     });
 
     it("Should handle edge case: count=0 returns empty array", async () => {
-      await socialFeed.connect(user).post("Post 1", "QmCID1");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("Post 1", "QmCID1", { value: cost });
 
       const tail = await socialFeed.tail();
       const posts = await socialFeed.getPosts(tail, 0);
@@ -183,8 +205,9 @@ describe("SocialFeed", function () {
     });
 
     it("Should handle edge case: requesting more posts than available", async () => {
-      await socialFeed.connect(user).post("Post 1", "QmCID1");
-      await socialFeed.connect(user).post("Post 2", "QmCID2");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("Post 1", "QmCID1", { value: cost });
+      await socialFeed.connect(user).post("Post 2", "QmCID2", { value: cost });
 
       const tail = await socialFeed.tail();
       const posts = await socialFeed.getPosts(tail, 5); // Only 2 posts exist
@@ -195,7 +218,8 @@ describe("SocialFeed", function () {
     });
 
     it("Should return empty array when startId=0 and posts exist", async () => {
-      await socialFeed.connect(user).post("Post 1", "QmCID1");
+      const cost = await socialFeed.getPostCostInWei();
+      await socialFeed.connect(user).post("Post 1", "QmCID1", { value: cost });
 
       const posts = await socialFeed.getPosts(0, 5);
 

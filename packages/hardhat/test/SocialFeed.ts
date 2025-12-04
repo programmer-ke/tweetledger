@@ -406,15 +406,15 @@ describe("SocialFeed", function () {
 
       // Check history
       const historyLength = await socialFeed.getAwardHistoryLength();
-      expect(historyLength).to.equal(initialHistoryLength + 1);
-      const record = await socialFeed.awardHistory(historyLength - 1);
+      expect(historyLength).to.equal(initialHistoryLength + 1n);
+      const record = await socialFeed.awardHistory(historyLength - 1n);
       expect(record.periodId).to.equal(initialPeriod);
       expect(record.addresses).to.deep.equal(winners);
       expect(record.amounts.length).to.equal(2);
       expect(record.postCounts).to.deep.equal(postCounts);
 
       // Check period incremented
-      expect(await socialFeed.rewardPeriodId()).to.equal(initialPeriod + 1);
+      expect(await socialFeed.rewardPeriodId()).to.equal(initialPeriod + 1n);
     });
 
     it("Should revert on non-admin call", async () => {

@@ -8,6 +8,7 @@ import { notification } from "~~/utils/scaffold-eth";
 export default function AdminPage() {
   const { address } = useAccount();
   const [newPrice, setNewPrice] = useState("");
+  const [newWinnerCount, setNewWinnerCount] = useState("");
 
   const { data: isAdmin } = useScaffoldReadContract({
     contractName: "SocialFeed",
@@ -18,6 +19,11 @@ export default function AdminPage() {
   const { data: currentPrice } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "usdPricePerEth",
+  });
+
+  const { data: currentWinnerCount } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "winnersPerRound",
   });
 
   const { writeContractAsync } = useScaffoldWriteContract("SocialFeed");
@@ -34,6 +40,21 @@ export default function AdminPage() {
     } catch (error) {
       console.log("error updating price", error);
       notification.error("Failed to update price");
+    }
+  };
+
+  const handleUpdateWinners = async () => {
+    if (!newWinnerCount || isNaN(Number(newWinnerCount))) return;
+    try {
+      await writeContractAsync({
+        functionName: "setWinnersPerRound",
+        args: [BigInt(newWinnerCount)],
+      });
+      notification.success("Winners per round updated successfully");
+      setNewWinnerCount("");
+    } catch (error) {
+      console.log("error updating winners", error);
+      notification.error("Failed to update winners per round");
     }
   };
 
@@ -55,6 +76,21 @@ export default function AdminPage() {
         />
         <button onClick={handleUpdatePrice} className="btn btn-primary" disabled={!newPrice}>
           Update Price
+        </button>
+      </div>
+      <div className="mb-4">
+        <p>Current Winners per Round: {currentWinnerCount ? currentWinnerCount.toString() : "Loading..."}</p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newWinnerCount}
+          onChange={e => setNewWinnerCount(e.target.value)}
+          placeholder="Enter new winners per round"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdateWinners} className="btn btn-primary" disabled={!newWinnerCount}>
+          Update Winners
         </button>
       </div>
     </div>

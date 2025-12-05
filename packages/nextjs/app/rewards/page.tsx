@@ -2,6 +2,12 @@
 
 import { formatEther } from "viem";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { useGlobalState } from "~~/services/store/store";
+
+function wei2Usd(wei: bigint, ethPrice: number): number {
+  const eth = wei / 10n ** 18n;
+  return Number(eth) * ethPrice;
+}
 
 export default function RewardsPage() {
   const { data: awardRecords, isLoading } = useScaffoldReadContract({
@@ -9,6 +15,7 @@ export default function RewardsPage() {
     functionName: "getLastAwardRecords",
     args: [3n],
   });
+  const ethPrice = useGlobalState(state => state.nativeCurrency.price);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -28,7 +35,7 @@ export default function RewardsPage() {
                   <tr>
                     <th>Address</th>
                     <th>Posts </th>
-                    <th>Reward Amount (ETH)</th>
+                    <th>ETH Reward</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -36,7 +43,11 @@ export default function RewardsPage() {
                     <tr key={i}>
                       <td>{addr}</td>
                       <td>{record.postCounts[i].toString()}</td>
-                      <td>{formatEther(record.amounts[i])}</td>
+                      <td>
+                        {ethPrice && ethPrice > 0
+                          ? formatEther(record.amounts[i]) + ` ( $${wei2Usd(record.amounts[i], ethPrice).toFixed(2)} )`
+                          : formatEther(record.amounts[i])}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

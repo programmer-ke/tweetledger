@@ -64,9 +64,9 @@ const Home: NextPage = () => {
           ) : (
             <>
               {awardsHistoryLength && awardsHistoryLength > 0 && (
-                <div className="mb-3 text-right">
-                  <Link href="/rewards" className="text-primary hover:underline">
-                    See latest rewards &gt;&gt;
+                <div className="mb-3 text-left">
+                  <Link href="/rewards" className="text-sm hover:underline">
+                    Latest rewards &gt;&gt;
                   </Link>
                 </div>
               )}

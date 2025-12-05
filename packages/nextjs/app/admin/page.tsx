@@ -225,14 +225,28 @@ export default function AdminPage() {
             {isPeriodLoading ? (
               <p>Loading...</p>
             ) : topWinners.length > 0 ? (
-              <ul className="list-disc pl-5">
-                {topWinners.map((winner, idx) => (
-                  <li key={winner.user}>
-                    {idx + 1}. {winner.user} - Posts: {winner.count}, Latest:{" "}
-                    {new Date(Number(winner.timestamp) * 1000).toLocaleString()}
-                  </li>
-                ))}
-              </ul>
+              <div className="overflow-x-auto">
+                <table className="table w-full">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Address</th>
+                      <th>Posts</th>
+                      <th>Latest Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topWinners.map((winner, idx) => (
+                      <tr key={winner.user}>
+                        <td>{idx + 1}</td>
+                        <td>{winner.user}</td>
+                        <td>{winner.count}</td>
+                        <td>{new Date(Number(winner.timestamp) * 1000).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <p>No winners yet.</p>
             )}

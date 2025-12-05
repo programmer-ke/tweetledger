@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
@@ -18,6 +19,11 @@ const Home: NextPage = () => {
   const { data: postCost } = useScaffoldReadContract({
     contractName: "SocialFeed",
     functionName: "getPostCostInWei",
+  });
+
+  const { data: awardsHistoryLength } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "getAwardHistoryLength",
   });
 
   const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "SocialFeed" });
@@ -57,6 +63,13 @@ const Home: NextPage = () => {
             <p className="text-center text-sm sm:text-base mb-4">Connect your wallet to post</p>
           ) : (
             <>
+              {awardsHistoryLength && awardsHistoryLength > 0 && (
+                <div className="mb-3 text-right">
+                  <Link href="/rewards" className="text-primary hover:underline">
+                    See latest rewards &gt;&gt;
+                  </Link>
+                </div>
+              )}
               <div className="mb-3 sm:mb-4">
                 <textarea
                   id="message"

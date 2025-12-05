@@ -148,7 +148,7 @@ export default function AdminPage() {
     }
   };
 
-  if (!isAdmin) return <div>Access denied: Only admins can access this page.</div>;
+  if (!isAdmin) return <div className="container mx-auto p-4">Access denied: Only admins can access this page.</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -161,7 +161,7 @@ export default function AdminPage() {
           type="number"
           value={newPrice}
           onChange={e => setNewPrice(e.target.value)}
-          placeholder="Enter new price"
+          placeholder="New price"
           className="input input-bordered"
         />
         <button onClick={handleUpdatePrice} className="btn btn-primary" disabled={!newPrice}>
@@ -176,7 +176,7 @@ export default function AdminPage() {
           type="number"
           value={newWinnerCount}
           onChange={e => setNewWinnerCount(e.target.value)}
-          placeholder="Enter new winners per round"
+          placeholder="Winners per round"
           className="input input-bordered"
         />
         <button onClick={handleUpdateWinners} className="btn btn-primary" disabled={!newWinnerCount}>
@@ -191,7 +191,7 @@ export default function AdminPage() {
           type="number"
           value={newCentsPerPost}
           onChange={e => setNewCentsPerPost(e.target.value)}
-          placeholder="Enter cents per post"
+          placeholder="Cents per post"
           className="input input-bordered"
         />
         <button onClick={handleUpdateCents} className="btn btn-primary" disabled={!newCentsPerPost}>
@@ -208,7 +208,7 @@ export default function AdminPage() {
           type="number"
           value={newRewardPercentage}
           onChange={e => setNewRewardPercentage(e.target.value)}
-          placeholder="Enter reward percentage (0-100)"
+          placeholder="Reward % (0-100)"
           className="input input-bordered"
         />
         <button onClick={handleUpdatePercentage} className="btn btn-primary" disabled={!newRewardPercentage}>

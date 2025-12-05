@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
@@ -65,9 +64,9 @@ const Home: NextPage = () => {
             <>
               {awardsHistoryLength && awardsHistoryLength > 0 && (
                 <div className="mb-3 text-left">
-                  <Link href="/rewards" className="text-sm hover:underline">
+                  <a href="/rewards" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
                     Latest rewards &gt;&gt;
-                  </Link>
+                  </a>
                 </div>
               )}
               <div className="mb-3 sm:mb-4">

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import { uploadToIPFS } from "~~/actions/uploadToIPFS";
 import { SocialFeed } from "~~/components/SocialFeed";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
@@ -14,6 +14,16 @@ const Home: NextPage = () => {
 
   const messageLength = message.length;
   const isValid = messageLength > 0 && messageLength <= 280;
+
+  const { data: postCost } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "getPostCostInWei",
+  });
+
+  const { data: awardsHistoryLength } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "getAwardHistoryLength",
+  });
 
   const { writeContractAsync, isPending } = useScaffoldWriteContract({ contractName: "SocialFeed" });
 
@@ -28,6 +38,7 @@ const Home: NextPage = () => {
         {
           functionName: "post",
           args: [message, cid],
+          value: postCost,
         },
         {
           onBlockConfirmation: txnReceipt => {
@@ -51,10 +62,17 @@ const Home: NextPage = () => {
             <p className="text-center text-sm sm:text-base mb-4">Connect your wallet to post</p>
           ) : (
             <>
+              {awardsHistoryLength != undefined && awardsHistoryLength > 0n && (
+                <div className="mb-3 text-left">
+                  <a href="/rewards" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
+                    Latest rewards &gt;&gt;
+                  </a>
+                </div>
+              )}
               <div className="mb-3 sm:mb-4">
                 <textarea
                   id="message"
-                  placeholder="What's on your mind?"
+                  placeholder="Gm, what are you up to today?"
                   className="textarea textarea-bordered w-full h-20 sm:h-24 resize-none rounded-xl text-sm sm:text-base"
                   maxLength={280}
                   value={message}
@@ -65,7 +83,7 @@ const Home: NextPage = () => {
               <div className="flex justify-end">
                 <button
                   className="btn btn-primary w-full sm:w-auto sm:min-w-32 rounded-xl text-sm sm:text-base"
-                  disabled={!isValid || isPending}
+                  disabled={!isValid || isPending || postCost === undefined}
                   onClick={handlePost}
                 >
                   {isPending ? (

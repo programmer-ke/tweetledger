@@ -1,0 +1,265 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useAccount } from "wagmi";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
+
+export default function AdminPage() {
+  const { address } = useAccount();
+  const [newPrice, setNewPrice] = useState("");
+  const [newWinnerCount, setNewWinnerCount] = useState("");
+  const [newCentsPerPost, setNewCentsPerPost] = useState("");
+  const [newRewardPercentage, setNewRewardPercentage] = useState("");
+  const [showWinners, setShowWinners] = useState(false);
+
+  const { data: isAdmin } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "admins",
+    args: [address],
+  });
+
+  const { data: currentPrice } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "usdPricePerEth",
+  });
+
+  const { data: currentWinnerCount } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "winnersPerRound",
+  });
+
+  const { data: currentCentsPerPost } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "usdCentsPerPost",
+  });
+
+  const { data: currentRewardPercentage } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "userRewardPercentage",
+  });
+
+  const { data: currentPeriodId } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "rewardPeriodId",
+  });
+
+  const { data: periodData, isLoading: isPeriodLoading } = useScaffoldReadContract({
+    contractName: "SocialFeed",
+    functionName: "getPeriodData",
+    args: [currentPeriodId],
+    query: {
+      enabled: showWinners, // Only fetch when showWinners is true
+    },
+  });
+
+  const { writeContractAsync } = useScaffoldWriteContract("SocialFeed");
+
+  const topWinners = useMemo(() => {
+    if (!periodData || !currentWinnerCount) return [];
+    const [users, data] = periodData;
+    const combined = users.map((user, i) => ({
+      user,
+      count: data[i].count,
+      timestamp: data[i].latestTimestamp,
+    }));
+    combined.sort((a, b) => {
+      const countDiff = Number(b.count) - Number(a.count);
+      if (countDiff !== 0) return countDiff;
+      return Number(a.timestamp) - Number(b.timestamp);
+    });
+    return combined.slice(0, Number(currentWinnerCount));
+  }, [periodData, currentWinnerCount]);
+
+  const handleUpdatePrice = async () => {
+    if (!newPrice || isNaN(Number(newPrice))) return;
+    try {
+      await writeContractAsync({
+        functionName: "setUsdPricePerEth",
+        args: [BigInt(newPrice)],
+      });
+      notification.success("Price updated successfully");
+      setNewPrice("");
+    } catch (error) {
+      console.log("error updating price", error);
+      notification.error("Failed to update price");
+    }
+  };
+
+  const handleUpdateWinners = async () => {
+    if (!newWinnerCount || isNaN(Number(newWinnerCount))) return;
+    try {
+      await writeContractAsync({
+        functionName: "setWinnersPerRound",
+        args: [BigInt(newWinnerCount)],
+      });
+      notification.success("Winners per round updated successfully");
+      setNewWinnerCount("");
+    } catch (error) {
+      console.log("error updating winners", error);
+      notification.error("Failed to update winners per round");
+    }
+  };
+
+  const handleUpdateCents = async () => {
+    if (!newCentsPerPost || isNaN(Number(newCentsPerPost))) return;
+    try {
+      await writeContractAsync({
+        functionName: "setUsdCentsPerPost",
+        args: [BigInt(newCentsPerPost)],
+      });
+      notification.success("Cents per post updated successfully");
+      setNewCentsPerPost("");
+    } catch (error) {
+      console.log("error updating cents", error);
+      notification.error("Failed to update cents per post");
+    }
+  };
+
+  const handleUpdatePercentage = async () => {
+    if (!newRewardPercentage || isNaN(Number(newRewardPercentage)) || Number(newRewardPercentage) > 100) return;
+    try {
+      await writeContractAsync({
+        functionName: "setUserRewardPercentage",
+        args: [BigInt(newRewardPercentage)],
+      });
+      notification.success("Reward percentage updated successfully");
+      setNewRewardPercentage("");
+    } catch (error) {
+      console.log("error updating percentage", error);
+      notification.error("Failed to update reward percentage");
+    }
+  };
+
+  const handleDistributeRewards = async () => {
+    if (!topWinners.length) return;
+    const addresses = topWinners.map(w => w.user);
+    const postCounts = topWinners.map(w => BigInt(w.count));
+    try {
+      await writeContractAsync({
+        functionName: "distributeRewards",
+        args: [addresses, postCounts],
+      });
+      notification.success("Rewards distributed successfully");
+      setShowWinners(false); // Optional: Reset to reload winners for new period
+    } catch (error) {
+      console.log("error distributing rewards", error);
+      notification.error("Failed to distribute rewards");
+    }
+  };
+
+  if (!isAdmin) return <div className="container mx-auto p-4">Access denied: Only admins can access this page.</div>;
+
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
+      <div className="mb-4">
+        <p>Current USD Price per ETH: {currentPrice ? currentPrice.toString() : "Loading..."}</p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newPrice}
+          onChange={e => setNewPrice(e.target.value)}
+          placeholder="New price"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdatePrice} className="btn btn-primary" disabled={!newPrice}>
+          Update Price
+        </button>
+      </div>
+      <div className="mb-4">
+        <p>Current Winners per Round: {currentWinnerCount ? currentWinnerCount.toString() : "Loading..."}</p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newWinnerCount}
+          onChange={e => setNewWinnerCount(e.target.value)}
+          placeholder="Winners per round"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdateWinners} className="btn btn-primary" disabled={!newWinnerCount}>
+          Update Winners
+        </button>
+      </div>
+      <div className="mb-4">
+        <p>Current USD Cents per Post: {currentCentsPerPost ? currentCentsPerPost.toString() : "Loading..."}</p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newCentsPerPost}
+          onChange={e => setNewCentsPerPost(e.target.value)}
+          placeholder="Cents per post"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdateCents} className="btn btn-primary" disabled={!newCentsPerPost}>
+          Update Cents
+        </button>
+      </div>
+      <div className="mb-4">
+        <p>
+          Current User Reward Percentage: {currentRewardPercentage ? currentRewardPercentage.toString() : "Loading..."}%
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={newRewardPercentage}
+          onChange={e => setNewRewardPercentage(e.target.value)}
+          placeholder="Reward % (0-100)"
+          className="input input-bordered"
+        />
+        <button onClick={handleUpdatePercentage} className="btn btn-primary" disabled={!newRewardPercentage}>
+          Update Percentage
+        </button>
+      </div>
+      <div className="mt-8">
+        <button onClick={() => setShowWinners(true)} className="btn btn-secondary" disabled={showWinners}>
+          Load Top Winners
+        </button>
+        {showWinners && (
+          <>
+            <h2 className="text-xl font-bold mb-4 mt-4">Top Winners for Period {currentPeriodId}</h2>
+            {isPeriodLoading ? (
+              <p>Loading...</p>
+            ) : topWinners.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="table w-full">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Address</th>
+                      <th>Posts</th>
+                      <th>Latest Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topWinners.map((winner, idx) => (
+                      <tr key={winner.user}>
+                        <td>{idx + 1}</td>
+                        <td>{winner.user}</td>
+                        <td>{winner.count}</td>
+                        <td>{new Date(Number(winner.timestamp) * 1000).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p>No winners yet.</p>
+            )}
+            {topWinners.length > 0 && (
+              <div className="mt-4">
+                <button onClick={handleDistributeRewards} className="btn btn-success">
+                  Distribute Rewards
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

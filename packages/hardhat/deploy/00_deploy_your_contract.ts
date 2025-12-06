@@ -23,7 +23,7 @@ const deploySocialFeed: DeployFunction = async function (hre: HardhatRuntimeEnvi
   await deploy("SocialFeed", {
     from: deployer,
     // Contract constructor arguments
-    args: [],
+    args: ["0x9c4822e433762B6DE0E3eC364A8f22D00DEAc363"],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.

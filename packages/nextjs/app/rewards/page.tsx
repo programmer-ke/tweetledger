@@ -28,7 +28,9 @@ export default function RewardsPage() {
       {reversedRecords.length > 0 ? (
         reversedRecords.map((record, idx) => (
           <div key={idx} className="mb-8">
-            <h2 className="text-xl font-semibold mb-2">Round {record.periodId.toString()}</h2>
+            <h2 className="text-xl font-semibold mb-2">
+              Round {record.periodId.toString()} - {new Date(Number(record.timestamp) * 1000).toLocaleDateString()}
+            </h2>
             <div className="overflow-x-auto">
               <table className="table table-zebra w-full">
                 <thead>

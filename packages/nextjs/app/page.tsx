@@ -83,7 +83,7 @@ const Home: NextPage = () => {
               <div className="flex justify-end">
                 <button
                   className="btn btn-primary w-full sm:w-auto sm:min-w-32 rounded-xl text-sm sm:text-base"
-                  disabled={!isValid || isPending || !postCost}
+                  disabled={!isValid || isPending || postCost === undefined}
                   onClick={handlePost}
                 >
                   {isPending ? (

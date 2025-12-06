@@ -214,5 +214,12 @@ contract SocialFeed is Ownable {
         return awardHistory.length;
     }
 
+    function withdraw(uint256 amount) external onlyOwner {
+        require(amount > 0, "Amount must be greater than 0");
+        require(amount <= address(this).balance, "Insufficient contract balance");
+        (bool success,) = payable(owner()).call{value: amount}("");
+        require(success, "Withdrawal failed");
+    }
+
     receive() external payable {}
 }

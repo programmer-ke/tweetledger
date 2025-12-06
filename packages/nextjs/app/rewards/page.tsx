@@ -5,8 +5,8 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
 
 function wei2Usd(wei: bigint, ethPrice: number): number {
-  const eth = wei / 10n ** 18n;
-  return Number(eth) * ethPrice;
+  const eth = Number(wei) / 1e18;
+  return eth * ethPrice;
 }
 
 export default function RewardsPage() {

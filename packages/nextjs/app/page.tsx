@@ -62,7 +62,7 @@ const Home: NextPage = () => {
             <p className="text-center text-sm sm:text-base mb-4">Connect your wallet to post</p>
           ) : (
             <>
-              {awardsHistoryLength && awardsHistoryLength > 0 && (
+              {awardsHistoryLength != undefined && awardsHistoryLength > 0n && (
                 <div className="mb-3 text-left">
                   <a href="/rewards" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
                     Latest rewards &gt;&gt;
@@ -72,7 +72,7 @@ const Home: NextPage = () => {
               <div className="mb-3 sm:mb-4">
                 <textarea
                   id="message"
-                  placeholder="Gm, what are you working on today?"
+                  placeholder="Gm, what are you up today?"
                   className="textarea textarea-bordered w-full h-20 sm:h-24 resize-none rounded-xl text-sm sm:text-base"
                   maxLength={280}
                   value={message}

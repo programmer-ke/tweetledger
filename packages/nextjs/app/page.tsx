@@ -72,7 +72,7 @@ const Home: NextPage = () => {
               <div className="mb-3 sm:mb-4">
                 <textarea
                   id="message"
-                  placeholder="Gm, what are you up today?"
+                  placeholder="Gm, what are you up to today?"
                   className="textarea textarea-bordered w-full h-20 sm:h-24 resize-none rounded-xl text-sm sm:text-base"
                   maxLength={280}
                   value={message}

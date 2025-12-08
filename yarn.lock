@@ -4255,6 +4255,7 @@ __metadata:
     blo: ~1.2.0
     burner-connector: 0.0.18
     daisyui: 5.0.9
+    emoji-picker-react: ^4.16.1
     eslint: ~9.23.0
     eslint-config-next: ~15.2.3
     eslint-config-prettier: ~10.1.1
@@ -17058,7 +17059,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
-    emoji-picker-react: ^4.16.1
     husky: ~9.1.6
     lint-staged: ~13.2.2
   languageName: unknown

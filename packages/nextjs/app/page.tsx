@@ -112,7 +112,18 @@ const Home: NextPage = () => {
                 </button>
                 {showEmojiPicker && (
                   <div className="absolute top-full mt-1 z-10">
-                    <EmojiPicker onEmojiClick={handleEmojiClick} width={pickerSize.width} height={pickerSize.height} />
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiClick}
+                      width={pickerSize.width}
+                      height={pickerSize.height}
+                      theme={"auto" as any}
+                      style={
+                        {
+                          "--epr-bg-color": "var(--color-base-300)",
+                          "--epr-category-label-bg-color": "var(--color-base-300)",
+                        } as any
+                      }
+                    />
                   </div>
                 )}
               </div>

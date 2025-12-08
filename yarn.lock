@@ -9001,6 +9001,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"emoji-picker-react@npm:^4.16.1":
+  version: 4.16.1
+  resolution: "emoji-picker-react@npm:4.16.1"
+  dependencies:
+    flairup: 1.0.0
+  peerDependencies:
+    react: ">=16"
+  checksum: 9c4ef71122d882d1dc19bc8377e2482f6022de1243133f304da18f106de108a6b0e6212a98beaae512a005216a67f8a123437a968ed25d6f0539420fbf100c35
+  languageName: node
+  linkType: hard
+
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -10531,6 +10542,13 @@ __metadata:
     locate-path: ^6.0.0
     path-exists: ^4.0.0
   checksum: 07955e357348f34660bde7920783204ff5a26ac2cafcaa28bace494027158a97b9f56faaf2d89a6106211a8174db650dd9f503f9c0d526b1202d5554a00b9095
+  languageName: node
+  linkType: hard
+
+"flairup@npm:1.0.0":
+  version: 1.0.0
+  resolution: "flairup@npm:1.0.0"
+  checksum: cf062568ed211c95b3ed4e378046803519616426c450d37d7659c10a8ad842f862bef1216aa55ddd91971433a5883272004286a06a13c27b428bc5f740d97c50
   languageName: node
   linkType: hard
 
@@ -17040,6 +17058,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
+    emoji-picker-react: ^4.16.1
     husky: ~9.1.6
     lint-staged: ~13.2.2
   languageName: unknown

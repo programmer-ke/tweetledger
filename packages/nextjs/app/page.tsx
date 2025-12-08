@@ -93,7 +93,7 @@ const Home: NextPage = () => {
                   😀
                 </button>
                 {showEmojiPicker && (
-                  <div className="absolute top-full mt-1 z-10">
+                  <div className="absolute top-full mt-1 z-10 ">
                     <EmojiPicker onEmojiClick={handleEmojiClick} />
                   </div>
                 )}

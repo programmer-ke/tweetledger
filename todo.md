@@ -102,13 +102,14 @@ slice. Status uses markdown checkboxes:
   
 ## Incentives
 
-- [>] **Collections and rewards system**
+- [x] **Collections and rewards system**
   - Set cost per post (spam prevention)
   - Set up semi-automatic rewards system
   - Set up owner balance withdrawal
 
-## NSFW handling
+## Enhancements
 
+- [ ] **Emoji support**
 - [ ] **Add a simple profanity filtering**
 
 

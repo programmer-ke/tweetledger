@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import EmojiPicker from "emoji-picker-react";
 import type { NextPage } from "next";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
@@ -11,6 +12,7 @@ import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaf
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
   const [message, setMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const messageLength = message.length;
   const isValid = messageLength > 0 && messageLength <= 280;
@@ -54,6 +56,11 @@ const Home: NextPage = () => {
     }
   };
 
+  const handleEmojiClick = (emojiData: any) => {
+    setMessage(prev => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-6 sm:pt-8 md:pt-10 px-4 sm:px-5 md:px-6">
@@ -69,17 +76,29 @@ const Home: NextPage = () => {
                   </a>
                 </div>
               )}
-              <div className="mb-3 sm:mb-4">
+              <div className="mb-3 sm:mb-4 relative">
                 <textarea
                   id="message"
-                  placeholder="Gm, what are you up to today?"
+                  placeholder="Gm, what are you up to today? 😊"
                   className="textarea textarea-bordered w-full h-20 sm:h-24 resize-none rounded-xl text-sm sm:text-base"
                   maxLength={280}
                   value={message}
                   onChange={e => setMessage(e.target.value)}
                 />
-                <div className="text-right text-xs sm:text-sm mt-1 text-gray-600">{messageLength}/280</div>
+                <button
+                  className="absolute bottom-2 right-2 btn btn-ghost btn-xs"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  type="button"
+                >
+                  😀
+                </button>
+                {showEmojiPicker && (
+                  <div className="absolute top-full mt-1 z-10">
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                  </div>
+                )}
               </div>
+              <div className="text-right text-xs sm:text-sm mt-1 text-gray-600">{messageLength}/280</div>
               <div className="flex justify-end">
                 <button
                   className="btn btn-primary w-full sm:w-auto sm:min-w-32 rounded-xl text-sm sm:text-base"

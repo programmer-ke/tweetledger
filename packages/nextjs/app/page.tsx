@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 import type { NextPage } from "next";
 import toast from "react-hot-toast";
@@ -13,6 +13,24 @@ const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [pickerSize, setPickerSize] = useState({ width: 320, height: 400 });
+
+  useEffect(() => {
+    const updatePickerSize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setPickerSize({ width: 280, height: 350 });
+      } else if (width < 1024) {
+        setPickerSize({ width: 320, height: 400 });
+      } else {
+        setPickerSize({ width: 400, height: 450 });
+      }
+    };
+
+    updatePickerSize();
+    window.addEventListener("resize", updatePickerSize);
+    return () => window.removeEventListener("resize", updatePickerSize);
+  }, []);
 
   const messageLength = message.length;
   const isValid = messageLength > 0 && messageLength <= 280;
@@ -93,8 +111,8 @@ const Home: NextPage = () => {
                   😀
                 </button>
                 {showEmojiPicker && (
-                  <div className="absolute top-full mt-1 z-10 ">
-                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                  <div className="absolute top-full mt-1 z-10">
+                    <EmojiPicker onEmojiClick={handleEmojiClick} width={pickerSize.width} height={pickerSize.height} />
                   </div>
                 )}
               </div>

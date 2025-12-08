@@ -109,8 +109,8 @@ slice. Status uses markdown checkboxes:
 
 ## Enhancements
 
-- [ ] **Emoji support**
-- [ ] **Add a simple profanity filtering**
+- [x] **Emoji support**
+- [>] **Add a simple profanity filtering**
 
 
 

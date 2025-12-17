@@ -207,24 +207,26 @@ export const SocialFeed = () => {
                         </span>
                       </div>
                       <p className="text-base sm:text-lg break-words whitespace-pre-wrap">{displayMessage}</p>
-                      {isProfane && (
-                        <button
-                          className="btn btn-xs btn-outline mt-2"
-                          onClick={() => setCensoredPosts(prev => ({ ...prev, [censoredKey]: !isCensored }))}
-                        >
-                          {isCensored ? "Show Uncensored" : "Show Censored"}
-                        </button>
-                      )}
-                      <p className="text-xs sm:text-sm text-gray-400 break-all mt-2">
-                        #{post.id} |{" "}
-                        <a
-                          target="_blank"
-                          href={`https://ipfs.io/ipfs/${post.cid}`}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          IPFS
-                        </a>
-                      </p>
+                      <div className="flex items-center justify-between mt-2">
+                        <p className="text-xs sm:text-sm text-gray-400 break-all">
+                          #{post.id} |{" "}
+                          <a
+                            target="_blank"
+                            href={`https://ipfs.io/ipfs/${post.cid}`}
+                            className="text-blue-500 hover:text-blue-700"
+                          >
+                            IPFS
+                          </a>
+                        </p>
+                        {isProfane && (
+                          <button
+                            className="btn btn-xs btn-outline"
+                            onClick={() => setCensoredPosts(prev => ({ ...prev, [censoredKey]: !isCensored }))}
+                          >
+                            {isCensored ? "Show Uncensored" : "Show Censored"}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

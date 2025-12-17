@@ -27,7 +27,7 @@
     "daisyui": "5.0.9",
     "emoji-picker-react": "^4.16.1",
     "kubo-rpc-client": "~5.0.2",
-    "next": "~15.2.6",
+    "next": "~15.2.7",
     "next-nprogress-bar": "~2.3.13",
     "next-themes": "~0.3.0",
     "pinata": "^2.5.1",

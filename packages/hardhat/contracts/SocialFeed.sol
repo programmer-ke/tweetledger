@@ -100,25 +100,27 @@ contract SocialFeed is Ownable {
             amounts[i] = perWinner;
         }
 
-        awardHistory.push(AwardRecord({
-            timestamp: block.timestamp,
-            periodId: rewardPeriodId,
-            addresses: winners,
-            amounts: amounts,
-            postCounts: postCounts
-        }));
+        awardHistory.push(
+            AwardRecord({
+                timestamp: block.timestamp,
+                periodId: rewardPeriodId,
+                addresses: winners,
+                amounts: amounts,
+                postCounts: postCounts
+            })
+        );
 
         rewardPeriodId++;
 
         // Interactions: External calls last
         for (uint256 i = 0; i < winners.length; i++) {
-            (bool success,) = payable(winners[i]).call{value: perWinner}("");
+            (bool success, ) = payable(winners[i]).call{ value: perWinner }("");
             require(success, "Reward transfer failed");
         }
 
         uint256 remaining = totalBalance - rewardPortion;
         if (remaining > 0) {
-            (bool success,) = payable(owner()).call{value: remaining}("");
+            (bool success, ) = payable(owner()).call{ value: remaining }("");
             require(success, "Owner transfer failed");
         }
     }
@@ -144,9 +146,9 @@ contract SocialFeed is Ownable {
         }
         tail = id;
 
-	// increment posting count for this reward period
-	userPostCount[rewardPeriodId][msg.sender].count++;
-	userPostCount[rewardPeriodId][msg.sender].latestTimestamp = block.timestamp;
+        // increment posting count for this reward period
+        userPostCount[rewardPeriodId][msg.sender].count++;
+        userPostCount[rewardPeriodId][msg.sender].latestTimestamp = block.timestamp;
 
         if (userPostCount[rewardPeriodId][msg.sender].count == 1) {
             periodUsers[rewardPeriodId].push(msg.sender);
@@ -186,7 +188,9 @@ contract SocialFeed is Ownable {
         return result;
     }
 
-    function getPeriodData(uint256 periodId) external view returns (address[] memory users, UserPeriodData[] memory data) {
+    function getPeriodData(
+        uint256 periodId
+    ) external view returns (address[] memory users, UserPeriodData[] memory data) {
         users = periodUsers[periodId];
         data = new UserPeriodData[](users.length);
         for (uint256 i = 0; i < users.length; i++) {
@@ -217,7 +221,7 @@ contract SocialFeed is Ownable {
     function withdraw(uint256 amount) external onlyOwner {
         require(amount > 0, "Amount must be greater than 0");
         require(amount <= address(this).balance, "Insufficient contract balance");
-        (bool success,) = payable(owner()).call{value: amount}("");
+        (bool success, ) = payable(owner()).call{ value: amount }("");
         require(success, "Withdrawal failed");
     }
 

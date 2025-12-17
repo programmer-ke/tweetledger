@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldReadContract, useScaffoldWatchContractEvent } from "~~/hooks/scaffold-eth";
-import { verifyPostIntegrity } from "~~/lib/utils";
+import { censorProfanity, detectProfanity, verifyPostIntegrity } from "~~/lib/utils";
 
 export const SocialFeed = () => {
   const { address: connectedAddress } = useAccount();
@@ -14,6 +14,7 @@ export const SocialFeed = () => {
   const [shouldScroll, setShouldScroll] = useState(false);
   const [displayedPosts, setDisplayedPosts] = useState<any[]>([]);
   const [hasNewPosts, setHasNewPosts] = useState(false);
+  const [profaneCIDs, setProfaneCIDs] = useState<Set<string>>(new Set());
 
   // Fetch tail ID using useScaffoldReadContract
   const {
@@ -113,6 +114,9 @@ export const SocialFeed = () => {
             const data = await response.json();
             const message = data.message;
             if (verifyPostIntegrity(post, message)) {
+              if (detectProfanity(message)) {
+                setProfaneCIDs(prev => new Set(prev).add(post.cid));
+              }
               return { cid: post.cid, message };
             } else {
               console.warn(`Hash mismatch for CID ${post.cid}`);
@@ -181,33 +185,40 @@ export const SocialFeed = () => {
             {displayedPosts && displayedPosts.length === 0 ? (
               <p className="text-center text-gray-500 text-sm sm:text-base py-8">No posts available.</p>
             ) : (
-              displayedPosts?.map(post => (
-                <div key={post.id} className="card bg-base-100 shadow-lg p-3 sm:p-4">
-                  <div className="card-body p-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                      <Address address={post.author} format="short" />
-                      <span className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-0">
-                        {new Date(Number(post.timestamp) * 1000).toLocaleString()}
-                      </span>
+              displayedPosts?.map(post => {
+                const isProfane = profaneCIDs.has(post.cid);
+                const rawMessage = messageCache[post.cid];
+                const displayMessage =
+                  rawMessage !== undefined
+                    ? isProfane
+                      ? censorProfanity(rawMessage || "")
+                      : rawMessage || "[Message unavailable]"
+                    : "Loading...";
+                return (
+                  <div key={post.id} className="card bg-base-100 shadow-lg p-3 sm:p-4">
+                    <div className="card-body p-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                        <Address address={post.author} format="short" />
+                        <span className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-0">
+                          {new Date(Number(post.timestamp) * 1000).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-base sm:text-lg break-words whitespace-pre-wrap">{displayMessage}</p>
+                      <p className="text-xs sm:text-sm text-gray-400 break-all">
+                        #{post.id} |{" "}
+                        <a
+                          target="_blank"
+                          href={`https://ipfs.io/ipfs/${post.cid}`}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          IPFS
+                        </a>
+                        {isProfane && <span className="ml-2 badge badge-warning">⚠️ Profane</span>}
+                      </p>
                     </div>
-                    <p className="text-base sm:text-lg break-words whitespace-pre-wrap">
-                      {messageCache[post.cid] !== undefined
-                        ? messageCache[post.cid] || "[Message unavailable]"
-                        : "Loading..."}
-                    </p>
-                    <p className="text-xs sm:text-sm text-gray-400 break-all">
-                      #{post.id} |{" "}
-                      <a
-                        target="_blank"
-                        href={`https://ipfs.io/ipfs/${post.cid}`}
-                        className="text-blue-500 hover:text-blue-700"
-                      >
-                        IPFS
-                      </a>
-                    </p>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 

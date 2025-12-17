@@ -89,7 +89,7 @@ const Home: NextPage = () => {
             <>
               {awardsHistoryLength != undefined && awardsHistoryLength > 0n && (
                 <div className="mb-3 text-left">
-                  <a href="/rewards" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
+                  <a href="/rewards" className="text-sm hover:underline">
                     Latest rewards &gt;&gt;
                   </a>
                 </div>

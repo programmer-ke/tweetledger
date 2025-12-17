@@ -1,3 +1,11 @@
+import {
+  type CensorContext,
+  RegExpMatcher,
+  TextCensor,
+  type TextCensorStrategy,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 import { Address, encodePacked, keccak256 } from "viem";
 
 export type Post = {
@@ -16,4 +24,24 @@ export function computeMessageHash(message: string, author: Address, timestamp: 
 export function verifyPostIntegrity(post: Post, fetchedMessage: string): boolean {
   const recomputedHash = computeMessageHash(fetchedMessage, post.author, post.timestamp);
   return recomputedHash === post.messageHash;
+}
+
+// Profanity detection utility
+const profanityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
+
+export function detectProfanity(text: string): boolean {
+  return profanityMatcher.hasMatch(text);
+}
+
+// Censoring utility using TextCensor
+const asteriskStrategy: TextCensorStrategy = (ctx: CensorContext) => "*".repeat(ctx.matchLength);
+const textCensor = new TextCensor().setStrategy(asteriskStrategy);
+
+export function censorProfanity(text: string, strategy?: TextCensorStrategy): string {
+  const censor = strategy ? new TextCensor().setStrategy(strategy) : textCensor;
+  const matches = profanityMatcher.getAllMatches(text);
+  return censor.applyTo(text, matches);
 }

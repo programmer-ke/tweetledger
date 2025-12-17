@@ -1,4 +1,4 @@
-import { Post, computeMessageHash, verifyPostIntegrity } from "~~/lib/utils";
+import { Post, censorProfanity, computeMessageHash, detectProfanity, verifyPostIntegrity } from "~~/lib/utils";
 
 describe("computeMessageHash", () => {
   it("computes correct hash for valid inputs", () => {
@@ -64,5 +64,48 @@ describe("verifyPostIntegrity", () => {
     };
     const tamperedMessage = "tampered message";
     expect(verifyPostIntegrity(post, tamperedMessage)).toBe(false);
+  });
+});
+
+describe("detectProfanity", () => {
+  it("returns true for text with profanity", () => {
+    expect(detectProfanity("This is a fucking test")).toBe(true);
+    expect(detectProfanity("Shit happens")).toBe(true);
+  });
+
+  it("returns false for clean text", () => {
+    expect(detectProfanity("This is a clean message")).toBe(false);
+    expect(detectProfanity("Hello world")).toBe(false);
+  });
+
+  it("handles case insensitivity and variations", () => {
+    expect(detectProfanity("FuCk")).toBe(true);
+    expect(detectProfanity("sh1t")).toBe(true); // Leetspeak
+  });
+
+  it("ignores punctuation and spacing", () => {
+    expect(detectProfanity("What the fuck!")).toBe(true);
+    expect(detectProfanity("asshole")).toBe(true);
+  });
+});
+
+describe("censorProfanity", () => {
+  it("censors profane words with default asterisks", () => {
+    expect(censorProfanity("This is a fucking test")).toBe("This is a ****ing test");
+    expect(censorProfanity("Shit happens")).toBe("**** happens");
+  });
+
+  it("censors with custom strategy", () => {
+    const customStrategy = () => "fudge";
+    expect(censorProfanity("asshole", customStrategy)).toBe("fudgehole");
+  });
+
+  it("leaves clean text unchanged", () => {
+    expect(censorProfanity("This is clean")).toBe("This is clean");
+  });
+
+  it("handles case insensitivity and variations", () => {
+    expect(censorProfanity("FuCk")).toBe("****");
+    expect(censorProfanity("sh1t")).toBe("****");
   });
 });

@@ -30,6 +30,7 @@
     "next": "~15.2.7",
     "next-nprogress-bar": "~2.3.13",
     "next-themes": "~0.3.0",
+    "obscenity": "^0.4.5",
     "pinata": "^2.5.1",
     "qrcode.react": "~4.0.1",
     "react": "~19.0.0",

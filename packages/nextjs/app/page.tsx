@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import EmojiPicker from "emoji-picker-react";
 import type { NextPage } from "next";
 import toast from "react-hot-toast";
@@ -89,9 +90,9 @@ const Home: NextPage = () => {
             <>
               {awardsHistoryLength != undefined && awardsHistoryLength > 0n && (
                 <div className="mb-3 text-left">
-                  <a href="/rewards" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
+                  <Link href="/rewards" className="text-sm hover:underline">
                     Latest rewards &gt;&gt;
-                  </a>
+                  </Link>
                 </div>
               )}
               <div className="mb-3 sm:mb-4 relative">

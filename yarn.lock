@@ -4266,6 +4266,7 @@ __metadata:
     next: ~15.2.7
     next-nprogress-bar: ~2.3.13
     next-themes: ~0.3.0
+    obscenity: ^0.4.5
     pinata: ^2.5.1
     postcss: ~8.4.45
     prettier: ~3.5.3
@@ -15225,6 +15226,13 @@ __metadata:
   version: 2.0.5
   resolution: "obliterator@npm:2.0.5"
   checksum: 49575c428d66941326f265b8962bbce05c2a209c180e6ebf49d07e6d6cf2e6ab3f805289ad58aec49e74825344c97e790e5658b55e226a8cb4f57d866db3adf5
+  languageName: node
+  linkType: hard
+
+"obscenity@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "obscenity@npm:0.4.5"
+  checksum: c60bac4d5a22167e8a201f87c17d8698a05afa7d37e96e169f9e87a24898812f2d323c2c1f10405287a67e9105af4210fc6cf9bd83fb109104f41847ebb6f365
   languageName: node
   linkType: hard
 

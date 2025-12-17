@@ -15,6 +15,7 @@ export const SocialFeed = () => {
   const [displayedPosts, setDisplayedPosts] = useState<any[]>([]);
   const [hasNewPosts, setHasNewPosts] = useState(false);
   const [profaneCIDs, setProfaneCIDs] = useState<Set<string>>(new Set());
+  const [censoredPosts, setCensoredPosts] = useState<{ [key: string]: boolean }>({});
 
   // Fetch tail ID using useScaffoldReadContract
   const {
@@ -187,10 +188,12 @@ export const SocialFeed = () => {
             ) : (
               displayedPosts?.map(post => {
                 const isProfane = profaneCIDs.has(post.cid);
+                const censoredKey = post.cid;
+                const isCensored = censoredPosts[censoredKey] ?? (isProfane ? true : false);
                 const rawMessage = messageCache[post.cid];
                 const displayMessage =
                   rawMessage !== undefined
-                    ? isProfane
+                    ? isCensored
                       ? censorProfanity(rawMessage || "")
                       : rawMessage || "[Message unavailable]"
                     : "Loading...";
@@ -204,7 +207,15 @@ export const SocialFeed = () => {
                         </span>
                       </div>
                       <p className="text-base sm:text-lg break-words whitespace-pre-wrap">{displayMessage}</p>
-                      <p className="text-xs sm:text-sm text-gray-400 break-all">
+                      {isProfane && (
+                        <button
+                          className="btn btn-xs btn-outline mt-2"
+                          onClick={() => setCensoredPosts(prev => ({ ...prev, [censoredKey]: !isCensored }))}
+                        >
+                          {isCensored ? "Show Uncensored" : "Show Censored"}
+                        </button>
+                      )}
+                      <p className="text-xs sm:text-sm text-gray-400 break-all mt-2">
                         #{post.id} |{" "}
                         <a
                           target="_blank"
@@ -213,7 +224,6 @@ export const SocialFeed = () => {
                         >
                           IPFS
                         </a>
-                        {isProfane && <span className="ml-2 badge badge-warning">⚠️ Profane</span>}
                       </p>
                     </div>
                   </div>

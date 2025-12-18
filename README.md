@@ -4,7 +4,7 @@
 
 Sovereign, permissionless and censorship resistant online townsquare.
 
-⚙️ Built on 🏗 [Scaffold-ETH 2][eth]
+🏗 Built on [Scaffold-ETH 2][eth]
 
 [eth]: https://scaffoldeth.io/
 
@@ -65,3 +65,45 @@ Run smart contract test with `yarn hardhat:test`
 Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
 
 To know more about its features, check out our [website](https://scaffoldeth.io).
+
+## Deployment
+
+### Deploying the Contract
+
+🔐 You will need to generate a deployer address using `yarn generate`
+This creates a mnemonic and saves it locally.
+
+👩‍🚀 Use `yarn account` to view your deployer account balances.
+
+⛽️ You will need to send ETH to your deployer address with your
+wallet, or get it from a public faucet of your chosen network.
+
+Set the contract owner wallet address `CONTRACT_OWNER_ADDRESS` in
+`packages/hardhat/.env`
+
+Scaffold ETH provides default Alchemy and Etherscan keys for
+interacting with RPC servers and Etherscan. To avoid any issues with
+rate limits, you can use your own.
+
+Set the following in `packages/hardhat/.env` from [Alchemy][alchemy]
+and [Etherscan][etherscan] respectively:
+
+- `ALCHEMY_API_KEY`
+- `ETHERSCAN_V2_API_KEY`
+
+[alchemy]: https://dashboard.alchemy.com/
+[etherscan]: https://etherscan.io/
+
+
+📡 Edit the `defaultNetwork` to your choice of public EVM networks in
+`packages/hardhat/hardhat.config.ts` e.g. `sepolia`. Alternatively,
+use the `--network` flat when deploying below.
+
+🚀 Run `yarn deploy` to deploy your smart contract to the public network
+selected in hardhat.config.ts above, **OR** specify the network
+e.g. `yarn deploy --network sepolia`. Note the contract address.
+
+Optionally run `yarn verify --network <network> to verify the contract
+on etherscan.
+
+

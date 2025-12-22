@@ -31,7 +31,7 @@ yarn install
 
 2. Set front-end environment variables
 
-In nextjs at `packages/nextjs` Rename `.env.example` to `.env.local` and set the recommended variables.
+In nextjs at `packages/nextjs` Copy `.env.example` to `.env.local` and set the recommended variables.
 
 3. Run a local network in the first terminal:
 

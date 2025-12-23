@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SocialFeed: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [
@@ -65,7 +65,7 @@ const deployedContracts = {
           anonymous: false,
           inputs: [
             {
-              indexed: false,
+              indexed: true,
               internalType: "uint256",
               name: "id",
               type: "uint256",
@@ -77,7 +77,7 @@ const deployedContracts = {
               type: "string",
             },
             {
-              indexed: false,
+              indexed: true,
               internalType: "address",
               name: "author",
               type: "address",
@@ -89,7 +89,7 @@ const deployedContracts = {
               type: "uint256",
             },
             {
-              indexed: false,
+              indexed: true,
               internalType: "uint256",
               name: "timestamp",
               type: "uint256",
@@ -711,7 +711,7 @@ const deployedContracts = {
         renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
-      deployedOnBlock: 1,
+      deployedOnBlock: 13,
     },
   },
   11155111: {

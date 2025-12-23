@@ -53,7 +53,14 @@ contract SocialFeed is Ownable {
 
     AwardRecord[] public awardHistory;
 
-    event PostCreated(uint256 id, string cid, address author, uint256 prevId, uint256 timestamp, bytes32 messageHash);
+    event PostCreated(
+        uint256 indexed id,
+        string cid,
+        address indexed author,
+        uint256 prevId,
+        uint256 indexed timestamp,
+        bytes32 messageHash
+    );
 
     modifier onlyAdmin() {
         require(admins[msg.sender], "Only admin");

@@ -132,7 +132,9 @@ export const PostForm = ({ connectedAddress }: PostFormProps) => {
             {/* Info icon with tooltip */}
             <div
               className="tooltip tooltip-right tooltip-primary cursor-pointer"
-              data-tip={`A few USD cents worth of ETH is sent with each post for spam mitigation and contributes to the reward pool`}
+              data-tip="A few USD cents worth of ETH is sent with each post for spam mitigation and contributes to the reward pool"
+              role="tooltip"
+              aria-label="A few USD cents worth of ETH is sent with each post for spam mitigation and contributes to the reward pool"
             >
               <InformationCircleIcon className="h-4 w-4 text-gray-500 hover:text-gray-700" />
             </div>

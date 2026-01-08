@@ -131,8 +131,8 @@ export const PostForm = ({ connectedAddress }: PostFormProps) => {
           <div className="flex justify-between items-center mt-2">
             {/* Info icon with tooltip */}
             <div
-              className="tooltip tooltip-top cursor-pointer"
-              data-tip={`A small amount of ETH (a few USD cents) is sent with each post for spam mitigation which contributes to the reward pool`}
+              className="tooltip tooltip-right tooltip-primary cursor-pointer"
+              data-tip={`A few USD cents worth of ETH is sent with each post for spam mitigation and contributes to the reward pool`}
             >
               <InformationCircleIcon className="h-4 w-4 text-gray-500 hover:text-gray-700" />
             </div>

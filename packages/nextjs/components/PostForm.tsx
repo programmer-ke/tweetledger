@@ -3,6 +3,7 @@ import Link from "next/link";
 import EmojiPicker from "emoji-picker-react";
 import toast from "react-hot-toast";
 import { Address } from "viem";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { uploadToIPFS } from "~~/actions/uploadToIPFS";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
@@ -125,7 +126,21 @@ export const PostForm = ({ connectedAddress }: PostFormProps) => {
               </div>
             )}
           </div>
-          <div className="text-right text-xs sm:text-sm mt-1 text-gray-600">{messageLength}/280</div>
+
+          {/* Flex container for icon and counter */}
+          <div className="flex justify-between items-center mt-2">
+            {/* Info icon with tooltip */}
+            <div
+              className="tooltip tooltip-top cursor-pointer"
+              data-tip={`A small amount of ETH (a few USD cents) is sent with each post for spam mitigation which contributes to the reward pool`}
+            >
+              <InformationCircleIcon className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+            </div>
+
+            {/* Existing character counter */}
+            <div className="text-right text-xs sm:text-sm text-gray-600">{messageLength}/280</div>
+          </div>
+
           <div className="flex justify-end">
             <button
               className="btn btn-primary w-full sm:w-auto sm:min-w-32 rounded-xl text-sm sm:text-base"
